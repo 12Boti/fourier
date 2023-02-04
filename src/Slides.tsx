@@ -1,0 +1,36 @@
+import { Component, createSignal } from "solid-js";
+import { Svg, Arrow } from './Svg';
+import { Complex } from 'complex.js';
+import AsciiMath from './AsciiMath';
+import { createAnimation, createSequence } from './animation';
+
+function easeOutQuad(x: number): number {
+  return 1 - (1 - x) * (1 - x);
+}
+
+const Slides: Component = () => {
+  const [x, setX] = createSignal(0);
+  const anim = createSequence([
+    {update: setX, from: 0,    to: 0.25, easing: easeOutQuad, duration: 2, delay: 1},
+    {update: setX, from: 0.25, to: 1, easing: easeOutQuad, duration: 2, delay: 1},
+    {update: setX, from: 1,    to: 0.75, easing: easeOutQuad, duration: 2, delay: 1},
+  ]);
+
+  return <>
+    <section><h1>Fourier-transzformáció</h1></section>
+    <section>
+      <AsciiMath>hat(f)(xi) = int_-oo^oo f(x)e^(-i2pi xi x)dx</AsciiMath>
+    </section>
+    <section on:reveal={anim.start}>
+      <div class="flex items-center justify-center">
+        <AsciiMath>{`e^(-i2pi*${x().toFixed(2)})`}</AsciiMath>
+        <Svg min={Complex(-1.2, -1.2)} max={Complex(1.2, 1.2)} class="w-60%">
+          <Arrow from={Complex(0,0)} to={Complex({arg: -2*Math.PI*x(), abs: 1})} />
+        </Svg>
+      </div>
+    </section>
+    <section>Slide</section>
+  </>;
+};
+
+export default Slides;
