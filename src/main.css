@@ -1,0 +1,29 @@
+.grid-container {
+  width: 100%;
+  height: 100%;
+  white-space: nowrap;
+  animation: scrolling-grid 20s linear infinite;
+  margin: auto;
+  padding: 0;
+}
+
+.grid-row {
+  width: 100%;
+  height: 200px;
+  text-align: left;
+}
+
+.grid-item{
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0;
+}
+
+@keyframes scrolling-grid {
+  0% {
+    transform: translateY(0%);
+  }
+  100% {
+    transform: translateY(-50%);
+  }
+}

@@ -35,7 +35,11 @@ const Slides: Component = () => {
     setUsers(await fetchUsers());
   });
 
-
+  /*
+  let double_users: any[] = users();
+  double_users.concat(users());
+  console.log(users());
+  */
   return <>
     <section><h1>Fourier-transzformáció</h1></section>
     <section>
@@ -56,6 +60,18 @@ const Slides: Component = () => {
             <div>
               <img src={user.avatar} class="max-w-xs max-h-xs"></img>
               <h3>{user.number}</h3>
+            </div>
+          )}
+        </For>
+      </div>
+    </section>
+    <section>
+      <div class="grid-container">
+        <For each={users().concat(users())}>
+          {(user) => (
+            <div class="grid-row">
+              <img src={user.avatar} class="grid-item"></img>
+              <h3 class="grid-item">{user.number}</h3>
             </div>
           )}
         </For>
