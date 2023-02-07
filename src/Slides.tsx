@@ -4,6 +4,8 @@ import { Complex } from 'complex.js';
 import AsciiMath from './AsciiMath';
 import { createAnimation, createSequence } from './animation';
 import { pb, UserRecord, getAvatar } from './pocketbase';
+import Plot from './Plot';
+import { linspace } from "./Editor";
 
 function easeOutQuad(x: number): number {
   return 1 - (1 - x) * (1 - x);
@@ -20,6 +22,7 @@ async function fetchUsers(): Promise<(UserRecord & {avatar: string})[]> {
   return r;
 }
 
+
 const Slides: Component = () => {
   const [x, setX] = createSignal(0);
   const anim = createSequence([
@@ -35,11 +38,6 @@ const Slides: Component = () => {
     setUsers(await fetchUsers());
   });
 
-  /*
-  let double_users: any[] = users();
-  double_users.concat(users());
-  console.log(users());
-  */
   return <>
     <section><h1>Fourier-transzformáció</h1></section>
     <section>
@@ -71,7 +69,9 @@ const Slides: Component = () => {
           {(user) => (
             <div class="grid-row">
               <img src={user.avatar} class="grid-item"></img>
-              <h3 class="grid-item">{user.number}</h3>
+              <div class="grid-item-func">
+                <Plot points={() => linspace(-8, 8, 1000).map((x) => [x, Math.sin(x/Math.PI*user.number)])} minX={-7.5} maxX={7.5} minY={-1.1} maxY={1.1} />
+              </div>
             </div>
           )}
         </For>
