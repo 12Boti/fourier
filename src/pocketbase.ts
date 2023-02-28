@@ -5,9 +5,13 @@ import { bottts } from '@dicebear/collection';
 
 
 async function newId(): Promise<string> {
-    const record = await pb.collection('users').create({number: 56});
-    localStorage.setItem('userid', record.id);
-    return record.id;
+    try {
+        const record = await pb.collection('users').create({number: 56});
+        localStorage.setItem('userid', record.id);
+        return record.id;
+    } catch (error) {
+        return "foo";
+    }
 }
 
 export function getAvatar(seed: string): string {
