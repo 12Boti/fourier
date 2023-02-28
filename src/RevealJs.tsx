@@ -14,11 +14,24 @@ const RevealJs: Component = () => {
     deck.on('slidetransitionend', (event) => {
       const currentSlide: HTMLElement = event.currentSlide;
       currentSlide.dispatchEvent(new Event("reveal"));
+      deck.nextFragment();
+    });
+    deck.on('fragmentshown', (event) => {
+      const currentFragment: HTMLElement = event.fragment;
+      currentFragment.dispatchEvent(new Event("reveal"));
+    });
+    deck.on('fragmenthidden', (event) => {
+      const currentFragment: HTMLElement = document.querySelector(".current-fragment");
+      if (currentFragment) {
+        currentFragment.dispatchEvent(new Event("reveal"));
+      } else {
+        deck.prev();
+      }
     });
   });
 
   onCleanup(() => {
-    deck.destroy();
+    deck?.destroy();
   });
 
 

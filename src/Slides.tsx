@@ -8,6 +8,7 @@ import { pb, UserRecord, getAvatar } from './pocketbase';
 import Plot from './Plot';
 import { linspace } from "./Editor";
 import { UnsubscribeFunc } from "pocketbase";
+import JpgSlides from "./JpgSlides";
 
 function easeOutQuad(x: number): number {
   return 1 - (1 - x) * (1 - x);
@@ -46,18 +47,6 @@ const Slides: Component = () => {
       </div>
     </section>
     <section>
-      <div class="grid grid-rows-3" style="grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr);">
-        <For each={users()}>
-          {(user) => (
-            <div>
-              <img src={user.avatar} class="max-w-xs max-h-xs"></img>
-              <h3>{user.number}</h3>
-            </div>
-          )}
-        </For>
-      </div>
-    </section>
-    <section>
       <div class="grid-container">
         <For each={users().concat(users())}>
           {(user) => (
@@ -71,6 +60,7 @@ const Slides: Component = () => {
         </For>
       </div>
     </section>
+    <JpgSlides />
   </>;
 };
 
