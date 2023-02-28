@@ -9,7 +9,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3.3.0
       - name: Build
-        run: yarn build
+        run: |
+          yarn install
+          yarn build
       - uses: actions/upload-pages-artifact@v1.0.7
         with:
           path: dist/
