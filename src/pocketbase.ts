@@ -14,7 +14,7 @@ export async function getAvatar(seed: string): string {
     return await createAvatar(bottts, { seed: seed }).toDataUri();
 }
 
-export const pb = new PocketBase('http://84.3.237.123:8001');
+export const pb = new PocketBase();
 
 export const userid: string = localStorage.getItem('userid') ?? await newId();
 

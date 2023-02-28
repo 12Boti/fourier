@@ -11,6 +11,9 @@ export default defineConfig({
   ],
   server: {
     port: 25565,
+    proxy: {
+      '/api': 'http://127.0.0.1:8090',
+    },
   },
   build: {
     target: 'esnext',
