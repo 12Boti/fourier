@@ -1,5 +1,4 @@
-import { Component, createSignal, createEffect } from 'solid-js';
-import { createThrottledMemo } from "@solid-primitives/memo";
+import { Component, createSignal, createEffect, on } from 'solid-js';
 import Plot from './Plot';
 import { pb, userid, UserRecord, avatar } from './pocketbase';
 
@@ -11,13 +10,32 @@ export function linspace(start: number, stop: number, num: number, endpoint = tr
   return Array.from({length: num}, (_, i) => start + step * i);
 }
 
+function createAsyncEffect(deps: (() => any)[], f: () => Promise<void>) {
+  let running = false;
+  let more = false;
+  async function worker() {
+    running = true;
+    while (more) {
+      more = false;
+      await f();
+    }
+    running = false;
+  }
+  createEffect(on(deps, () => {
+    more = true;
+    if (running === false) {
+      worker();
+    }
+  }));
+}
+
 const Editor: Component = () => {
 
   const [frequency, setFrequency] = createSignal(1);
   const points = () => linspace(-8, 8, 1000).map((x) => [x, Math.sin(x/Math.PI*frequency())]);
-  createThrottledMemo(async () => {
-    const record = await pb.collection('users').update(userid, { number: frequency() });
-  }, 200);
+  createAsyncEffect([frequency], async () => {
+    await pb.collection('users').update<UserRecord>(userid, { number: frequency() });
+  });
 
   
   return (

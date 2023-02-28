@@ -672,6 +672,13 @@
     estree-walker "^2.0.2"
     picomatch "^2.3.1"
 
+"@solid-primitives/map@^0.4.1":
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/@solid-primitives/map/-/map-0.4.1.tgz#8c0f8472fd682672c9972085c8fd85a57ab953ff"
+  integrity sha512-ypDSOszhm2m0K08oVMaq9EPGOWO9+9jpBJ4/DPoYKi1ewA8jjv1Jr8NFt3CLbhqcC1Ku3YEz1bSmchFkTtAaag==
+  dependencies:
+    "@solid-primitives/trigger" "^1.0.1"
+
 "@solid-primitives/memo@^1.1.4":
   version "1.1.4"
   resolved "https://registry.yarnpkg.com/@solid-primitives/memo/-/memo-1.1.4.tgz#5aff8633998a255517359030b543ed26518bd29c"
@@ -685,10 +692,22 @@
   resolved "https://registry.yarnpkg.com/@solid-primitives/scheduled/-/scheduled-1.2.1.tgz#b6563b8c8fb9b8d6c0a85b50abac75febba9866b"
   integrity sha512-tV8xJuNJoWR2Kk6FPVpB8KcWjOwJDMYTC31CEW4qDrLwQHzIexJsZsV5Dh5df/YNz5gh3vpxyvBnWTgTf6o/1w==
 
+"@solid-primitives/trigger@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@solid-primitives/trigger/-/trigger-1.0.1.tgz#cdcceebf0d413127ea2c4ddd9755c9e82ceb7b1f"
+  integrity sha512-ocTawf1O2kZjciQURmkduXR9tgFb52DmkauoN6zYDoT/JIyN8zLIOIQIcc8Jc6/Y/QmWKVZWK/uNy5Faxez33g==
+  dependencies:
+    "@solid-primitives/utils" "^5.2.1"
+
 "@solid-primitives/utils@^5.0.0":
   version "5.1.0"
   resolved "https://registry.yarnpkg.com/@solid-primitives/utils/-/utils-5.1.0.tgz#e1295ec3d091012795c02c8e8aa8916f40177185"
   integrity sha512-1qmY9VaHWbEolBGhszqq7ziPJpXOXtcsQ14I7j8o/57bvfBQtwZ64idJrSdPBPIGzKSyPVZ1olYWz4yfitTBrA==
+
+"@solid-primitives/utils@^5.2.1":
+  version "5.2.1"
+  resolved "https://registry.yarnpkg.com/@solid-primitives/utils/-/utils-5.2.1.tgz#14e8d8422a1d4842d1072be96706f5e84c46719b"
+  integrity sha512-CbnU/lqyVtnfpBBt6UVvRXbF8tM/yT27FH6Uf18aeKtAvCDERzAzImSrT9Z8L2TnbnOMMPEp5aZk3OEZi+5eHg==
 
 "@types/estree@^1.0.0":
   version "1.0.0"

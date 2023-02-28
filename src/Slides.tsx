@@ -1,4 +1,5 @@
-import { Component, createSignal, For } from "solid-js";
+import { Component, createMemo, createSignal, For, JSXElement, onCleanup } from "solid-js";
+import { ReactiveMap } from "@solid-primitives/map";
 import { Svg, Arrow } from './Svg';
 import { Complex } from 'complex.js';
 import AsciiMath from './AsciiMath';
@@ -6,22 +7,11 @@ import { createAnimation, createSequence } from './animation';
 import { pb, UserRecord, getAvatar } from './pocketbase';
 import Plot from './Plot';
 import { linspace } from "./Editor";
+import { UnsubscribeFunc } from "pocketbase";
 
 function easeOutQuad(x: number): number {
   return 1 - (1 - x) * (1 - x);
 }
-
-async function fetchUsers(): Promise<(UserRecord & {avatar: string})[]> {
-  const raw = await pb.collection('users').getFullList<UserRecord>(200 /* batch size */, {
-    sort: '-created',
-  });
-  let r = [];
-  for (let i = 0; i < raw.length; i++) {
-    r.push({...raw[i], avatar: await getAvatar(raw[i].id)});
-  }
-  return r;
-}
-
 
 const Slides: Component = () => {
   const [x, setX] = createSignal(0);
@@ -30,13 +20,17 @@ const Slides: Component = () => {
     {update: setX, from: 0.25, to: 1,    easing: easeOutQuad, duration: 2, delay: 1},
     {update: setX, from: 1,    to: 0.75, easing: easeOutQuad, duration: 2, delay: 1},
   ]);
-  const [users, setUsers] = createSignal<(UserRecord & {avatar: string})[]>([]);
+  const userMap = new ReactiveMap<string, UserRecord & {avatar: string}>();
+  const users = createMemo(() => [...userMap.values()]);
 
-  (async () => setUsers(await fetchUsers()))();
+  let unsubscribe: UnsubscribeFunc | null = null;
+  (async () => {
+    unsubscribe = await pb.collection('users').subscribe<UserRecord>('*', async function (e) {
+      userMap.set(e.record.id, {...e.record, avatar: getAvatar(e.record.id)});
+    });
+  })(); 
+  onCleanup(() => { if (unsubscribe) unsubscribe() });
 
-  pb.collection('users').subscribe('*', async function (e) {
-    setUsers(await fetchUsers());
-  });
 
   return <>
     <section><h1>Fourier-transzformáció</h1></section>

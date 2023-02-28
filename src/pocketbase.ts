@@ -10,15 +10,15 @@ async function newId(): Promise<string> {
     return record.id;
 }
 
-export async function getAvatar(seed: string): string {
-    return await createAvatar(bottts, { seed: seed }).toDataUri();
+export function getAvatar(seed: string): string {
+    return createAvatar(bottts, { seed: seed }).toDataUriSync();
 }
 
 export const pb = new PocketBase();
 
 export const userid: string = localStorage.getItem('userid') ?? await newId();
 
-export const avatar = await getAvatar(userid);
+export const avatar = getAvatar(userid);
 
 export interface UserRecord {
     id: string;
