@@ -8,7 +8,7 @@
 
 
 import { Component, createSignal, onMount , createEffect, on, Context } from 'solid-js';
-import {Complex} from './complex';
+import {Complex} from 'complex.js';
 import {dft} from './fourier';
 
 let x = [];
@@ -24,8 +24,8 @@ function epicycles(x:number, y: number, rotation: number, fourier: {z: Complex,f
     let prevx = x;
     let prevy = y;
     let freq = fourier[i].freq;
-    let radius = fourier[i].z.modulus();
-    let phase =  fourier[i].z.argument();
+    let radius = fourier[i].z.abs();
+    let phase =  fourier[i].z.arg();
     x += radius * Math.cos(freq * time + phase + rotation);
     y += radius * Math.sin(freq * time + phase + rotation);
     context.beginPath();
@@ -123,7 +123,7 @@ const Draw: Component = () => {
           canvas.removeEventListener('touchmove', handleMove);
           canvas.removeEventListener('touchend', handleUp);
           fourierX = dft(drawing);
-          fourierX.sort((a, b) => b.z.modulus() - a.z.modulus());
+          fourierX.sort((a, b) => b.z.abs() - a.z.abs());
           userDrawing = false;
           window.requestAnimationFrame(animation);
         };
