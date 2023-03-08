@@ -2,7 +2,7 @@ import * as colors from './colors';
 import { Complex } from 'complex.js';
 import { Component, JSX, splitProps } from 'solid-js';
 
-export const Svg: Component<{children: JSX.Element, min: Complex, max: Complex}> = (props) => {
+export const Svg: Component<{children?: JSX.Element, min: Complex, max: Complex} & JSX.SvgSVGAttributes<SVGSVGElement>> = (props) => {
   const [p, other] = splitProps(props, ["children", "min", "max"]);
   return <svg viewBox={[p.min.re, -p.max.im, p.max.re-p.min.re, p.max.im-p.min.im].join(" ")} {...other}>
     {p.children}
@@ -12,7 +12,7 @@ export const Svg: Component<{children: JSX.Element, min: Complex, max: Complex}>
 export const Line: Component<{from: Complex, to: Complex}> = (props) =>
   <line
     x1={props.from.re} y1={-props.from.im} x2={props.to.re} y2={-props.to.im}
-    stroke={colors.stroke} stroke-width="0.05"
+    stroke={colors.stroke} stroke-width="0.05" {...props}
   />;
 
 export const Polygon: Component<{points: Complex[]}> = (props) =>
@@ -21,12 +21,14 @@ export const Polygon: Component<{points: Complex[]}> = (props) =>
     fill={colors.stroke}
   />;
 
-export const Polyline: Component<{points: Complex[]}> = (props) =>
-  <polyline
-    points={props.points.map(p => `${p.re},${-p.im}`).join(" ")}
-    stroke={colors.stroke} stroke-width="0.05"
-    fill='none'
+export const Polyline: Component<{points: Complex[]}> = (props) => {
+  const [p, other] = splitProps(props, ["points"]);
+  return <polyline
+    points={p.points.map(p => `${p.re},${-p.im}`).join(" ")}
+    stroke={colors.stroke} stroke-width="0.05" fill='none'
+    {...other}
   />;
+}
 
 export const Arrow: Component<{from: Complex, to: Complex}> = (props) => {
   let v = () => {

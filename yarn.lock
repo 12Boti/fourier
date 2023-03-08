@@ -672,6 +672,20 @@
     estree-walker "^2.0.2"
     picomatch "^2.3.1"
 
+"@solid-primitives/event-listener@^2.2.8":
+  version "2.2.8"
+  resolved "https://registry.yarnpkg.com/@solid-primitives/event-listener/-/event-listener-2.2.8.tgz#74acf467de7186d37cb73927bb53f3367b357d36"
+  integrity sha512-I3Fw6+1g1YrXBWHwnNi6UaYuRVeaRBN2pvfGvKgnHH4OtfN6mgkGXi7s+/QOJjS29sEdwRDR9tQgxckaIxKZ7A==
+  dependencies:
+    "@solid-primitives/utils" "^5.4.0"
+
+"@solid-primitives/immutable@^0.1.8":
+  version "0.1.8"
+  resolved "https://registry.yarnpkg.com/@solid-primitives/immutable/-/immutable-0.1.8.tgz#19e890bd2c449ab6afa32b967bc7613271d82af4"
+  integrity sha512-qT+FfgweyVa5bjeEhOOd5mJrmOgzUbIbB7SCIT+MMR87K72s7+SuqLpWtQwNE4hac4rMg25mElwVHaM1HRtqHQ==
+  dependencies:
+    "@solid-primitives/utils" "^5.4.0"
+
 "@solid-primitives/map@^0.4.2":
   version "0.4.2"
   resolved "https://registry.yarnpkg.com/@solid-primitives/map/-/map-0.4.2.tgz#b6ca5d9180fcb4ac130d262a6f47b690d5fafd2d"
@@ -686,6 +700,30 @@
   dependencies:
     "@solid-primitives/scheduled" "^1.2.1"
     "@solid-primitives/utils" "^5.0.0"
+
+"@solid-primitives/pointer@^0.2.7":
+  version "0.2.7"
+  resolved "https://registry.yarnpkg.com/@solid-primitives/pointer/-/pointer-0.2.7.tgz#8cfbad7a5b0e49caf498f827b8d6f8a10f8d4e68"
+  integrity sha512-0ogkGXGOAodetJUfkqvFtOnDXSBR8QTeFBNqAosy1Z11vJ4GUSGri9T3tCkuSRZLXDfOi4viUZeaI8CiKxoUvA==
+  dependencies:
+    "@solid-primitives/event-listener" "^2.2.8"
+    "@solid-primitives/immutable" "^0.1.8"
+    "@solid-primitives/rootless" "^1.2.6"
+    "@solid-primitives/utils" "^5.4.0"
+
+"@solid-primitives/raf@^2.1.8":
+  version "2.1.8"
+  resolved "https://registry.yarnpkg.com/@solid-primitives/raf/-/raf-2.1.8.tgz#95237957af5b33cb9e6c8a5f6cc986acce880049"
+  integrity sha512-1RCeZCnF7ca09n8BDGkN56P1DJAlvmBYnc1iopEiTxeT0pCGP14rqkGkM7h2Ct7qwfRBIL3vFTGh/MGaswLrZQ==
+  dependencies:
+    "@solid-primitives/utils" "^5.4.0"
+
+"@solid-primitives/rootless@^1.2.6":
+  version "1.2.6"
+  resolved "https://registry.yarnpkg.com/@solid-primitives/rootless/-/rootless-1.2.6.tgz#50612608cba6f31229acd15dcee8f54964d3263b"
+  integrity sha512-gcEF2JqdLDyKsfA7FWRZok1JkbKKjQesaRAj4odfkHTakEzU95YfBQxH9NHZ/ezP5WSR7m/xEh5eQjHs+7XPPA==
+  dependencies:
+    "@solid-primitives/utils" "^5.4.0"
 
 "@solid-primitives/scheduled@^1.2.1":
   version "1.2.1"

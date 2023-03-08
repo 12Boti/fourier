@@ -23,6 +23,8 @@
     "@dicebear/core": "^5.3.0",
     "@solid-primitives/map": "^0.4.2",
     "@solid-primitives/memo": "^1.1.4",
+    "@solid-primitives/pointer": "^0.2.7",
+    "@solid-primitives/raf": "^2.1.8",
     "@solid-primitives/tween": "^1.2.5",
     "asciimath2tex": "^1.4.0",
     "complex.js": "^2.1.1",

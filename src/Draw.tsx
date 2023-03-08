@@ -7,164 +7,79 @@
 
 
 
-import { Component, createSignal, onMount , createEffect, on, Context } from 'solid-js';
+import { Component, createSignal, For, createMemo } from 'solid-js';
 import {Complex} from 'complex.js';
-import {normalized, fft, dft} from './fourier';
-import {train} from './codingtrain';
+import { normalized, fft } from './fourier';
+import { Polyline, Svg } from './Svg';
+import { createPointerListeners } from "@solid-primitives/pointer";
+import { createRAF } from '@solid-primitives/raf';
 
-let x = [];
-let fourierX: {z: Complex,freq: number}[];
-let time = 0;
-let path: Complex[] = [];
-let drawing: Complex[] = [];
-let userDrawing = false;
-
-
-function epicycles(x:number, y: number, rotation: number, fourier: {z: Complex,freq: number}[], context: CanvasRenderingContext2D) {
-  for (let i = 0; i < fourier.length; i++) {
-    let prevx = x;
-    let prevy = y;
-    let freq = fourier[i].freq;
-    let radius = fourier[i].z.abs();
-    let phase =  fourier[i].z.arg();
-    x += radius * Math.cos(freq * time + phase + rotation);
-    y += radius * Math.sin(freq * time + phase + rotation);
-    context.beginPath();
-    context.strokeStyle = "rgba(255, 165, 250, 0.5)";
-    context.moveTo(prevx+radius, prevy);
-    context.ellipse(prevx, prevy, radius, radius, 0, 0, 2 * Math.PI);
-    context.stroke();
-    context.beginPath();
-    context.strokeStyle = "#FCFC05";
-    context.moveTo(prevx, prevy);
-    context.lineTo(x,y);
-    context.stroke();
-  }
-
-  return new Complex(x,y);
+function zip<A, B>(a: A[], b: B[]): [A, B][] {
+  return a.map((k, i) => [k, b[i]]);
 }
 
 function floorPowerOfTwo(n: number): number {
   return Math.pow(2, Math.floor(Math.log2(n)));
 }
 
-
 const Draw: Component = () => {
-  const handleDown = (event: MouseEvent | TouchEvent) => {
-    userDrawing = true;
-    drawing = [];
-    x = [];
-    time = 0;
-    path = [];
-
-    const canvas : HTMLCanvasElement | null = document.getElementById("canvas");
-    if (canvas != null) {
-      const context = canvas.getContext('2d');
-      if (context != null) {
-        
-        context.beginPath();
-        context.strokeStyle = "#05d3fc";
-  
-        let xCoord: number = 0 , yCoord: number = 0;
-        if (event instanceof MouseEvent) {
-          xCoord = event.offsetX;
-          yCoord = event.offsetY;
-        } else if (event instanceof TouchEvent) {
-          const touch = event.touches[0];
-          xCoord = touch.clientX;
-          yCoord = touch.clientY;
-        }
-        context.moveTo(xCoord, yCoord);
-
-        const handleMove = (event: MouseEvent | TouchEvent) => {
-          
-          event.preventDefault();
-          let xCoord: number = 0, yCoord: number = 0;
-          if (event instanceof MouseEvent) {
-            xCoord = event.offsetX;
-            yCoord = event.offsetY;
-          } else if (event instanceof TouchEvent) {
-            const touch = event.touches[0];
-            xCoord = touch.clientX;
-            yCoord = touch.clientY;
-          }
-          context.lineTo(xCoord, yCoord);
-          drawing.push(new Complex(xCoord - canvas.width/2, yCoord-canvas.height/2));
-          context.stroke();
-        };
-  
-        function animation() {
-          if(context && canvas) {
-            context.clearRect(0, 0, canvas.width, canvas.height);
-            path.push(epicycles(canvas.width / 2, canvas.height / 2, 0, fourierX, context));
-            context.moveTo(path[0].re, path[0].im);
-            context.beginPath();
-            context.strokeStyle = "#05d3fc";
-            for (let i = 0; i < path.length; i++) {
-              context.lineTo(path[i].re, path[i].im);
-            }
-            context.stroke();
-            const dt = 2*Math.PI / (fourierX.length);
-            time += dt;
-            if (time > 2*Math.PI) {
-              time = 0;
-              path = [];
-            }
-            if(!userDrawing) {
-              window.requestAnimationFrame(animation);
-            }
-            else {
-              context.clearRect(0, 0, canvas.width, canvas.height);
-            }
-          }
-          
-        }
-  
-        const handleUp = () => {
-          canvas.removeEventListener('mousemove', handleMove);
-          canvas.removeEventListener('mouseup', handleUp);
-          canvas.removeEventListener('touchmove', handleMove);
-          canvas.removeEventListener('touchend', handleUp);
-/*           drawing = [];
-          for(let i = 0; i < train.length; i++) {
-            drawing.push(Complex(train[i].x, train[i].y));
-          } */
-          const signallium = drawing.filter((_, k) => (k+1)%Math.floor(drawing.length/(drawing.length-floorPowerOfTwo(drawing.length))) !== 0 || k>(drawing.length-floorPowerOfTwo(drawing.length))*Math.floor(drawing.length/(drawing.length-floorPowerOfTwo(drawing.length))));
-          console.log(signallium.length, floorPowerOfTwo(drawing.length), drawing.length, Math.ceil(drawing.length/(drawing.length-floorPowerOfTwo(drawing.length))));
-          const t1 = Date.now();
-          fourierX = normalized(fft(signallium)).map((z, freq) => ({z, freq}));
-          const t2 = Date.now();
-          //const fourierY = normalized(dft(drawing)).map((z, freq) => ({z, freq}));
-          const t3 = Date.now();
-          console.log(t2-t1, t3-t2);
-          //console.log(drawing.length);
-          fourierX.sort((a, b) => b.z.abs() - a.z.abs());
-          userDrawing = false;
-          window.requestAnimationFrame(animation);
-        };
-  
-        canvas.addEventListener('mousemove', handleMove);
-        canvas.addEventListener('mouseup', handleUp);
-        canvas.addEventListener('touchmove', handleMove, { passive: false });
-        canvas.addEventListener('touchend', handleUp);
-      }
-
-      
+  const [drawing, setDrawing] = createSignal<Complex[]>([]);
+  const [fourier, setFourier] = createSignal<{z: Complex, freq: number}[]>([]);
+  let startTime = 0;
+  const [currentTime, setCurrentTime] = createSignal(0);
+  const time = () => Math.floor((currentTime() - startTime)/100)*2*Math.PI/fourier().length;
+  const offsets = createMemo(() => fourier().map(({z, freq}) => Complex({abs: z.abs(), arg: freq * time() + z.arg()})));
+  const positions = () => {
+    const o = offsets();
+    const a = Array(o.length+1);
+    a[0] = Complex.ZERO;
+    for (let i = 1; i < o.length; i++) {
+        a[i] = a[i-1].add(o[i-1]);
     }
-
-
+    return a;
   };
+  let svg: SVGSVGElement;
+
+  createPointerListeners({
+    target: () => svg,
+    ondown: _ => {
+      setFourier([]);
+      setDrawing([]);
+    },
+    onmove: e => {
+      if (e.buttons == 0) return;
+      const dp = new DOMPoint(e.x, e.y).matrixTransform(svg.getScreenCTM()!.inverse());
+      const p = Complex(dp.x, -dp.y);
+      // console.log(p);
+      setDrawing([...drawing(), p]);
+    },
+    onup: _ => {
+      const l = drawing().length;
+      const diff = l-floorPowerOfTwo(l);
+      const step = Math.floor(l/diff);
+      const signallium = drawing().filter((_, k) => k%step !== 0 || k>diff*step);
+      const f = normalized(fft(signallium)).map((z, freq) => ({z, freq}));
+      f.sort((a, b) => b.z.abs() - a.z.abs());
+      console.log(f);
+      setFourier(f);
+      startTime = currentTime();
+    },
+  });
+
+  const [, start, ] = createRAF(setCurrentTime);
+  start();
+  //createEffect(() => console.log(time()));
 
   return (
-    <div>
-      <canvas
-        id="canvas"
-        width= {window.innerWidth}
-        height={window.innerHeight}
-        onmousedown={handleDown}
-        ontouchstart={handleDown}
-      ></canvas>
-    </div>
+    <Svg ref={svg} min={Complex(-1, -1)} max={Complex(1, 1)} class="w-full h-full">
+      <For each={zip(fourier(), positions())}>
+        {([{z, freq}, p]) => <>
+          <circle cx={p.re} cy={-p.im} r={z.abs()} fill="none" stroke="#FFA5FA77" stroke-width="0.003"></circle>
+        </>}
+      </For>
+      <Polyline points={drawing()} stroke-width="0.003" />
+      <Polyline points={positions()} stroke-width="0.003" stroke="#FCFC05" />
+    </Svg>
   );
 };
 
