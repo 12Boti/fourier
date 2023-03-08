@@ -33,13 +33,14 @@ function epicycles(x:number, y: number, rotation: number, fourier: {z: Complex,f
     context.strokeStyle = "rgba(255, 165, 250, 0.5)";
     context.moveTo(prevx+radius, prevy);
     context.ellipse(prevx, prevy, radius, radius, 0, 0, 2 * Math.PI);
-    
+    context.stroke();
     context.beginPath();
     context.strokeStyle = "#FCFC05";
     context.moveTo(prevx, prevy);
     context.lineTo(x,y);
+    context.stroke();
   }
-  context.stroke();
+
   return new Complex(x,y);
 }
 
