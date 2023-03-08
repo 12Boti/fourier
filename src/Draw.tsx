@@ -9,7 +9,8 @@
 
 import { Component, createSignal, onMount , createEffect, on, Context } from 'solid-js';
 import {Complex} from 'complex.js';
-import {dft_normalized} from './fourier';
+import {normalized, fft, dft} from './fourier';
+import {train} from './codingtrain';
 
 let x = [];
 let fourierX: {z: Complex,freq: number}[];
@@ -42,7 +43,9 @@ function epicycles(x:number, y: number, rotation: number, fourier: {z: Complex,f
   return new Complex(x,y);
 }
 
-
+function floorPowerOfTwo(n: number): number {
+  return Math.pow(2, Math.floor(Math.log2(n)));
+}
 
 
 const Draw: Component = () => {
@@ -100,7 +103,7 @@ const Draw: Component = () => {
               context.lineTo(path[i].re, path[i].im);
             }
             context.stroke();
-            const dt = 2*Math.PI / (1*drawing.length);
+            const dt = 2*Math.PI / (fourierX.length);
             time += dt;
             if (time > 2*Math.PI) {
               time = 0;
@@ -122,7 +125,19 @@ const Draw: Component = () => {
           canvas.removeEventListener('mouseup', handleUp);
           canvas.removeEventListener('touchmove', handleMove);
           canvas.removeEventListener('touchend', handleUp);
-          fourierX = dft_normalized(drawing).map((z, freq) => ({z, freq}));
+          /*drawing = [];
+          for(let i = 0; i < train.length; i++) {
+            drawing.push(Complex(train[i].x, train[i].y));
+          } */
+          const signallium = drawing.filter((_, k) => (k+1)%Math.floor(drawing.length/(drawing.length-floorPowerOfTwo(drawing.length))) !== 0 || k>(drawing.length-floorPowerOfTwo(drawing.length))*Math.floor(drawing.length/(drawing.length-floorPowerOfTwo(drawing.length))));
+          console.log(signallium.length, floorPowerOfTwo(drawing.length), drawing.length, Math.ceil(drawing.length/(drawing.length-floorPowerOfTwo(drawing.length))));
+          const t1 = Date.now();
+          fourierX = normalized(fft(signallium)).map((z, freq) => ({z, freq}));
+          const t2 = Date.now();
+          const fourierY = normalized(dft(drawing)).map((z, freq) => ({z, freq}));
+          const t3 = Date.now();
+          console.log(t2-t1, t3-t2);
+          //console.log(drawing.length);
           fourierX.sort((a, b) => b.z.abs() - a.z.abs());
           userDrawing = false;
           window.requestAnimationFrame(animation);
