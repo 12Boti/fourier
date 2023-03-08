@@ -9,7 +9,7 @@
 
 import { Component, createSignal, onMount , createEffect, on, Context } from 'solid-js';
 import {Complex} from 'complex.js';
-import {dft} from './fourier';
+import {dft_normalized} from './fourier';
 
 let x = [];
 let fourierX: {z: Complex,freq: number}[];
@@ -122,7 +122,7 @@ const Draw: Component = () => {
           canvas.removeEventListener('mouseup', handleUp);
           canvas.removeEventListener('touchmove', handleMove);
           canvas.removeEventListener('touchend', handleUp);
-          fourierX = dft(drawing);
+          fourierX = dft_normalized(drawing).map((z, freq) => ({z, freq}));
           fourierX.sort((a, b) => b.z.abs() - a.z.abs());
           userDrawing = false;
           window.requestAnimationFrame(animation);
