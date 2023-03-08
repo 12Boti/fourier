@@ -124,10 +124,10 @@ const Draw: Component = () => {
           canvas.removeEventListener('mouseup', handleUp);
           canvas.removeEventListener('touchmove', handleMove);
           canvas.removeEventListener('touchend', handleUp);
-          drawing = [];
+/*           drawing = [];
           for(let i = 0; i < train.length; i++) {
             drawing.push(Complex(train[i].x, train[i].y));
-          }
+          } */
           const signallium = drawing.filter((_, k) => (k+1)%Math.floor(drawing.length/(drawing.length-floorPowerOfTwo(drawing.length))) !== 0 || k>(drawing.length-floorPowerOfTwo(drawing.length))*Math.floor(drawing.length/(drawing.length-floorPowerOfTwo(drawing.length))));
           console.log(signallium.length, floorPowerOfTwo(drawing.length), drawing.length, Math.ceil(drawing.length/(drawing.length-floorPowerOfTwo(drawing.length))));
           const t1 = Date.now();
