@@ -33,13 +33,13 @@ function epicycles(x:number, y: number, rotation: number, fourier: {z: Complex,f
     context.strokeStyle = "rgba(255, 165, 250, 0.5)";
     context.moveTo(prevx+radius, prevy);
     context.ellipse(prevx, prevy, radius, radius, 0, 0, 2 * Math.PI);
-    context.stroke();
+    
     context.beginPath();
     context.strokeStyle = "#FCFC05";
     context.moveTo(prevx, prevy);
     context.lineTo(x,y);
-    context.stroke();
   }
+  context.stroke();
   return new Complex(x,y);
 }
 
@@ -114,7 +114,6 @@ const Draw: Component = () => {
             }
             else {
               context.clearRect(0, 0, canvas.width, canvas.height);
-              context.beginPath();
             }
           }
           
@@ -125,16 +124,16 @@ const Draw: Component = () => {
           canvas.removeEventListener('mouseup', handleUp);
           canvas.removeEventListener('touchmove', handleMove);
           canvas.removeEventListener('touchend', handleUp);
-          /*drawing = [];
+          drawing = [];
           for(let i = 0; i < train.length; i++) {
             drawing.push(Complex(train[i].x, train[i].y));
-          } */
+          }
           const signallium = drawing.filter((_, k) => (k+1)%Math.floor(drawing.length/(drawing.length-floorPowerOfTwo(drawing.length))) !== 0 || k>(drawing.length-floorPowerOfTwo(drawing.length))*Math.floor(drawing.length/(drawing.length-floorPowerOfTwo(drawing.length))));
           console.log(signallium.length, floorPowerOfTwo(drawing.length), drawing.length, Math.ceil(drawing.length/(drawing.length-floorPowerOfTwo(drawing.length))));
           const t1 = Date.now();
           fourierX = normalized(fft(signallium)).map((z, freq) => ({z, freq}));
           const t2 = Date.now();
-          const fourierY = normalized(dft(drawing)).map((z, freq) => ({z, freq}));
+          //const fourierY = normalized(dft(drawing)).map((z, freq) => ({z, freq}));
           const t3 = Date.now();
           console.log(t2-t1, t3-t2);
           //console.log(drawing.length);
