@@ -1,4 +1,6 @@
-import { batch } from "solid-js";
+import createTween from "@solid-primitives/tween";
+import Complex from "complex.js";
+import { batch, createSignal } from "solid-js";
 
 let globalTime: number;
 
@@ -73,7 +75,25 @@ function createSequence(options: (AnimationOptions)[]): Animation {
     };
 }
 
-export { createAnimation, createSequence };
+interface TweenOpts {
+    ease?: ((t: number) => number);
+    duration?: number;
+}
+
+function createTweenedNumber(value: number, opts: TweenOpts): [() => number, (number) => void, () => number] {
+    const [v, setv] = createSignal(value);
+    const tweenedv = createTween(v, opts);
+    return [tweenedv, setv, v];
+}
+
+function createTweenedComplex(value: Complex, opts: TweenOpts): [() => Complex, (Complex) => void, () => Complex] {
+    const [v, setv] = createSignal(value);
+    const tweenedre = createTween(() => v().re, opts);
+    const tweenedim = createTween(() => v().im, opts);
+    return [() => Complex(tweenedre(), tweenedim()), setv, v];
+}
+
+export { createAnimation, createSequence, createTweenedNumber, createTweenedComplex };
 
 /*
 
