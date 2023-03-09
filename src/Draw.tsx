@@ -68,8 +68,7 @@ const Draw: Component = () => {
     }
   };
 
-
-  createPointerListeners({
+  const listeners = {
     target: () => svg,
     ondown: _ => {
       setFourier([]);
@@ -107,14 +106,18 @@ const Draw: Component = () => {
       setDrawing([]);
       startTime = currentTime();
     },
-  });
+  };
+
+  createPointerListeners(listeners);
 
   const [, start, ] = createRAF(setCurrentTime);
   start();
   //createEffect(() => console.log(time()));
 
   return (
-    <Svg ref={svg} onKeyDown={handleKeyDown}  min={camera().sub(complexZoom())} max={camera().add(complexZoom())} class="w-full h-full" tabindex="0">
+    <Svg ref={svg} onKeyDown={handleKeyDown}  min={camera().sub(complexZoom())} max={camera().add(complexZoom())} class="w-full h-full" tabindex="0"
+      ontouchmove={(e) => listeners.onmove({x: e.touches[0].pageX, y: e.touches[0].pageY})} ontouchend={listeners.onup}
+    >
       <For each={zip(filteredFourier(), positions())}>
         {([{z, freq}, p]) => <>
           <circle cx={p.re} cy={-p.im} r={z.abs()} fill="none" stroke="#FFA5FA77" stroke-width="1" vector-effect="non-scaling-stroke"></circle>
