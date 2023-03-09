@@ -47,3 +47,21 @@ html, body {
   height: 1000px;
   padding: 0;
 }
+h1 {
+  font-family:'Times New Roman', Times, serif !important;
+  font-size: 95px !important;
+}
+div.absolute {
+position:;
+top: -70%;
+left: 0;
+font-size:270%;
+
+}
+div.grid-item {
+  border: solid;
+  border-color:aqua;
+  padding-right: 5%;
+  padding-left: 5%;
+
+}
