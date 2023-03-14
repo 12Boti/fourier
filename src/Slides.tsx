@@ -31,8 +31,9 @@ const Slides: Component = () => {
     });
   })(); 
   onCleanup(() => { if (unsubscribe) unsubscribe() });
-  const points = () => linspace(-7*Math.PI, 7*Math.PI, 1000).map((x) => [x, Math.sin(x/Math.PI*440)]);
-
+  const Asin = () => linspace(-7*Math.PI, 7*Math.PI, 1000).map((x) => [x, Math.sin(x/Math.PI*3*(440/329.63))]);
+  const Esin = () => linspace(-7*Math.PI, 7*Math.PI, 1000).map((x) => [x, Math.sin(x/Math.PI*3)]);
+  const EAsin = () => linspace(-7*Math.PI, 7*Math.PI, 1000).map((x) => [x, Math.sin(x/Math.PI*3)+Math.sin(x/Math.PI*3*(440/329.63))]);
   return <>
     <section><h1>Fourier-transzformáció</h1></section>
     <section>
@@ -43,7 +44,7 @@ const Slides: Component = () => {
       
     </section>
     <section>
-      <AsciiMath>f(x)=sinx</AsciiMath>
+      <AsciiMath>f(x)=sinAx</AsciiMath>
       <svg width="800" height="300" viewBox="-1.5 -5 20 7" >
         <line x1="-30" y1="0" x2="30" y2="0" stroke-width="2" stroke="#E04C1F" vector-effect="non-scaling-stroke"></line>
         <line x1="0" y1="30" x2="0" y2="-30" stroke-width="2" stroke="#E04C1F" vector-effect="non-scaling-stroke"></line>
@@ -56,7 +57,47 @@ const Slides: Component = () => {
         
       <polyline
         stroke={"#1FB3E0"} stroke-width="5" fill="none" vector-effect="non-scaling-stroke"
-        points={points().map(([x, y]) => `${x} ${-y}`).join(",")} />
+        points={Asin().map(([x, y]) => `${x} ${-y}`).join(",")} />
+      <text x="85%" y="-15%" font-size="1" fill="#d02fa0" vector-effect="non-scaling-stroke"> t(s)
+        </text>
+    </svg>
+    
+    </section>
+    <section>
+      <AsciiMath>f(x)=sinEx</AsciiMath>
+      <svg width="800" height="300" viewBox="-1.5 -5 20 7" >
+        <line x1="-30" y1="0" x2="30" y2="0" stroke-width="2" stroke="#E04C1F" vector-effect="non-scaling-stroke"></line>
+        <line x1="0" y1="30" x2="0" y2="-30" stroke-width="2" stroke="#E04C1F" vector-effect="non-scaling-stroke"></line>
+        <line x1="18" y1="0.5" x2="18.5" y2="0" stroke-width="2" stroke="#E04C1F" vector-effect="non-scaling-stroke"></line>
+        <line x1="18" y1="-0.5" x2="18.5" y2="0" stroke-width="2" stroke="#E04C1F" vector-effect="non-scaling-stroke"></line>
+        <line x1="0" y1="-5.25" x2="0.5" y2="-4.75" stroke-width="2" stroke="#E04C1F" vector-effect="non-scaling-stroke"></line>
+        <line x1="0" y1="-5.25" x2="-0.5" y2="-4.75" stroke-width="2" stroke="#E04C1F" vector-effect="non-scaling-stroke"></line>
+        <text x="-5%" y="-60%" fill="#d02fa0" font-size="1" vector-effect="non-scaling-stroke"> Δ
+        </text>
+        
+      <polyline
+        stroke={"#1FB3E0"} stroke-width="5" fill="none" vector-effect="non-scaling-stroke"
+        points={Esin().map(([x, y]) => `${x} ${-y}`).join(",")} />
+      <text x="85%" y="-15%" font-size="1" fill="#d02fa0" vector-effect="non-scaling-stroke"> t(s)
+        </text>
+    </svg>
+    
+    </section>
+    <section>
+      <AsciiMath>f(x)=sinAx+sinEx</AsciiMath>
+      <svg width="800" height="300" viewBox="-1.5 -5 20 7" >
+        <line x1="-30" y1="0" x2="30" y2="0" stroke-width="2" stroke="#E04C1F" vector-effect="non-scaling-stroke"></line>
+        <line x1="0" y1="30" x2="0" y2="-30" stroke-width="2" stroke="#E04C1F" vector-effect="non-scaling-stroke"></line>
+        <line x1="18" y1="0.5" x2="18.5" y2="0" stroke-width="2" stroke="#E04C1F" vector-effect="non-scaling-stroke"></line>
+        <line x1="18" y1="-0.5" x2="18.5" y2="0" stroke-width="2" stroke="#E04C1F" vector-effect="non-scaling-stroke"></line>
+        <line x1="0" y1="-5.25" x2="0.5" y2="-4.75" stroke-width="2" stroke="#E04C1F" vector-effect="non-scaling-stroke"></line>
+        <line x1="0" y1="-5.25" x2="-0.5" y2="-4.75" stroke-width="2" stroke="#E04C1F" vector-effect="non-scaling-stroke"></line>
+        <text x="-5%" y="-60%" fill="#d02fa0" font-size="1" vector-effect="non-scaling-stroke"> Δ
+        </text>
+        
+      <polyline
+        stroke={"#1FB3E0"} stroke-width="5" fill="none" vector-effect="non-scaling-stroke"
+        points={EAsin().map(([x, y]) => `${x} ${-y}`).join(",")} />
       <text x="85%" y="-15%" font-size="1" fill="#d02fa0" vector-effect="non-scaling-stroke"> t(s)
         </text>
     </svg>
