@@ -75,18 +75,18 @@ function createSequence(options: (AnimationOptions)[]): Animation {
     };
 }
 
-interface TweenOpts {
+export interface TweenOpts {
     ease?: ((t: number) => number);
     duration?: number;
 }
 
-function createTweenedNumber(value: number, opts: TweenOpts): [() => number, (number) => void, () => number] {
+function createTweenedNumber(value: number, opts: TweenOpts): [() => number, (v: number) => void, () => number] {
     const [v, setv] = createSignal(value);
     const tweenedv = createTween(v, opts);
     return [tweenedv, setv, v];
 }
 
-function createTweenedComplex(value: Complex, opts: TweenOpts): [() => Complex, (Complex) => void, () => Complex] {
+function createTweenedComplex(value: Complex, opts: TweenOpts): [() => Complex, (v: Complex) => void, () => Complex] {
     const [v, setv] = createSignal(value);
     const tweenedre = createTween(() => v().re, opts);
     const tweenedim = createTween(() => v().im, opts);
