@@ -26,7 +26,7 @@ function floorPowerOfTwo(n: number): number {
 
 const Draw: Component = () => {
   let zoomed = false;
-  const [zoom, setZoom] = createTweenedNumber(1, {duration: 50000});
+  const [zoom, setZoom] = createTweenedNumber(1, {duration: 2500});
   const complexZoom = () => Complex(zoom(), zoom());
   const [camera, setCamera] = createSignal(Complex(0, 0));
   const [drawing, setDrawing] = createSignal<Complex[]>([]);
