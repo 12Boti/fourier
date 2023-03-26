@@ -14,7 +14,7 @@ export const Svg: Component<{children?: JSX.Element, min: Complex, max: Complex}
   let svg: SVGSVGElement;
   const [scale, setScale] = createSignal(1);
   const ro = new ResizeObserver(entries => {
-    const m = svg.getScreenCTM();
+    const m = svg.getCTM();
     setScale(m?.a || 1);
   });
   onMount(() => ro.observe(svg));
