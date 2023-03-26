@@ -1,6 +1,5 @@
-import createTween from "@solid-primitives/tween";
 import Complex from "complex.js";
-import { batch, createSignal } from "solid-js";
+import { batch, Component, createEffect, createSignal, For, on, onCleanup } from "solid-js";
 
 let globalTime: number;
 
@@ -80,18 +79,49 @@ export interface TweenOpts {
     duration?: number;
 }
 
+export function createTween(
+    target: () => number,
+    { ease = (t: number) => 1 - (1 - t) * (1 - t), duration = 100 },
+): () => number {
+    const [start, setStart] = createSignal<[number, number]>([document.timeline.currentTime ?? 0, target()]);
+    const [current, setCurrent] = createSignal(target());
+    let lastTarget = target();
+    createEffect(on(target, () => {
+        setStart([document.timeline.currentTime ?? 0, lastTarget]);
+        lastTarget = target();
+    }, { defer: true }));
+    createEffect(on([start, current], () => {
+        const cancelId = requestAnimationFrame(t => {
+            const [startTime, startVal] = start();
+            const elapsed = t - startTime;
+            // @ts-ignore
+            setCurrent(
+                elapsed < duration
+                    ? (target() - startVal) * ease(elapsed / duration) + startVal
+                    : target()
+            );
+        });
+        onCleanup(() => cancelAnimationFrame(cancelId));
+    }));
+    return current;
+}
+
 function createTweenedNumber(value: number, opts: TweenOpts): [() => number, (v: number) => void, () => number] {
-    const [v, setv] = createSignal(value);
+    const [v, setv] = createSignal(value, {equals: () => false});
     const tweenedv = createTween(v, opts);
     return [tweenedv, setv, v];
 }
 
 function createTweenedComplex(value: Complex, opts: TweenOpts): [() => Complex, (v: Complex) => void, () => Complex] {
-    const [v, setv] = createSignal(value);
+    const [v, setv] = createSignal(value, {equals: () => false});
     const tweenedre = createTween(() => v().re, opts);
     const tweenedim = createTween(() => v().im, opts);
     return [() => Complex(tweenedre(), tweenedim()), setv, v];
 }
+
+export const Animations: Component<{children: (() => void)[]}> = (props) => <For each={props.children}>{callback =>
+    <span class="fragment" on:reveal={callback} />
+}</For>
 
 export { createAnimation, createSequence, createTweenedNumber, createTweenedComplex };
 

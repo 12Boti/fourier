@@ -4,7 +4,7 @@ import textPng from "../images/text.png";
 import lettersPng from "../images/letters.png";
 import duck1 from "../images/duck1.jpg";
 import { Complex } from 'complex.js';
-import { createTweenedNumber, createTweenedComplex, TweenOpts } from "./animation";
+import { createTweenedNumber, createTweenedComplex, TweenOpts, Animations } from "./animation";
 import { Component, createEffect, createMemo, createResource, createSignal, For, JSX, onMount, Show, splitProps } from "solid-js";
 import { linspace } from "./Editor";
 import createTween from "@solid-primitives/tween";
@@ -151,10 +151,6 @@ function dct2d(signal: number[][]): number[][] {
 function invdct2d(signal: number[][]): number[][] {
     return transpose(transpose(signal).map(invdct)).map(invdct);
 }
-
-const Animations: Component<{children: (() => void)[]}> = (props) => <For each={props.children}>{callback =>
-    <span class="fragment" on:reveal={callback} />
-}</For>
 
 const Pepe = () => {
     const [pos, setPos] = createTweenedComplex(Complex(0, 0), {duration: 500});

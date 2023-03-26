@@ -15,7 +15,7 @@ export const Svg: Component<{children?: JSX.Element, min: Complex, max: Complex}
   const [scale, setScale] = createSignal(1);
   const ro = new ResizeObserver(entries => {
     const m = svg.getScreenCTM();
-    setScale(m!.a);
+    setScale(m?.a || 1);
   });
   onMount(() => ro.observe(svg));
 
@@ -50,20 +50,21 @@ export const Polyline: Component<{points: Complex[]}> = (props) => {
   />;
 }
 
-export const Arrow: Component<{from: Complex, to: Complex, color: string}> = (props) => {
+export const Arrow: Component<{from: Complex, to: Complex, color: string, headwidth?: number, headlength?: number}> = (props) => {
   const scale = getScale();
   let v = () => {
     const d = props.from.sub(props.to);
-    return d.mul(20 / scale() / d.abs());
+    let r = d.isZero() ? Complex(0, -1/scale()) : d.mul(20 / scale() / d.abs());
+    return r.sign().mul(Math.min(r.abs(), d.abs()));
   };
   let polygon: SVGPolygonElement;
   
   return <>
-    <Line from={props.from} to={props.to.add(v())} stroke={props.color} />
+    <Line from={props.from} to={props.to.add(v().mul(props.headlength ?? 1))} stroke={props.color} />
     <Polygon ref={polygon} points={[
       props.to,
-      props.to.add(v().mul(2)).add(v().mul(Complex.I)),
-      props.to.add(v().mul(2)).add(v().mul(Complex.I).neg())
+      props.to.add(v().mul(props.headlength ?? 1).mul(2)).add(v().mul(props.headwidth ?? 1).mul(Complex.I)),
+      props.to.add(v().mul(props.headlength ?? 1).mul(2)).add(v().mul(props.headwidth ?? 1).mul(Complex.I).neg())
     ]} fill={props.color} vector-effect="non-scaling-size" />
   </>;
 };
@@ -85,7 +86,6 @@ export const Axes: Component<{
   min: Complex, max: Complex,
 }> = (props) => {
   const p = props;
-  const scale = getScale();
   return <>
     <Arrow from={Complex(p.min.re, 0)} to={Complex(p.max.re, 0)} color="#E04C1F"/>
     <Arrow from={Complex(0, p.min.im)} to={Complex(0, p.max.im)} color="#E04C1F" />
@@ -121,4 +121,9 @@ export const PlotSvg: Component<{
   return <Svg min={p.min} max={p.max}>
     <Plot min={p.min} max={p.max} xlabel={p.xlabel} ylabel={p.ylabel} func={p.func} resolution={p.resolution} />
   </Svg>
+}
+
+export const Point: Component<{pos: Complex, color: string}> = (p) => {
+  const scale = getScale();
+  return <circle cx={p.pos.re} cy={-p.pos.im} r={5/scale()} fill={p.color} />
 }

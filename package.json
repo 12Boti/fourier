@@ -26,6 +26,7 @@
     "@solid-primitives/pointer": "^0.2.7",
     "@solid-primitives/raf": "^2.1.8",
     "@solid-primitives/tween": "^1.2.5",
+    "@thi.ng/color": "^5.4.5",
     "asciimath2tex": "^1.4.0",
     "complex.js": "^2.1.1",
     "katex": "^0.16.4",
