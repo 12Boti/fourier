@@ -1,6 +1,6 @@
 import * as colors from './colors';
 import { Complex } from 'complex.js';
-import { Component, createContext, createSignal, JSX, onMount, splitProps, useContext } from 'solid-js';
+import { Component, createContext, createSignal, For, JSX, onMount, splitProps, useContext } from 'solid-js';
 import { linspace } from './Editor';
 
 const SvgScaleContext = createContext<() => number>();
@@ -127,4 +127,17 @@ export const PlotSvg: Component<{
 export const Point: Component<{pos: Complex, color: string}> = (p) => {
   const scale = getScale();
   return <circle cx={p.pos.re} cy={-p.pos.im} r={5/scale()} fill={p.color} />
+}
+
+export const PlotyDoty: Component<{
+  min: Complex, max: Complex, 
+  func: (x: number) => number,
+  resolution?: number,
+}> = (p) => {
+  const xs = linspace(p.min.re, p.max.re-0.5, p.resolution ?? 1000).map((x) => Complex(x, p.func(x)));
+  return <For each={xs}>
+    {(a) => <>
+      <Point pos={a} color={"#E04C1F"}></Point>
+    </>}
+  </For>
 }

@@ -5,6 +5,7 @@ import AsciiMath from './AsciiMath';
 import { createSequence } from './animation';
 import JpgSlides from "./JpgSlides";
 import { FourierSlides } from "./FourierSlides";
+import { FftSlides } from "./FftSlides";
 import { PlaySlides } from "./PlaySlides";
 
 function easeOutQuad(x: number): number {
@@ -21,6 +22,7 @@ const Slides: Component = () => {
 
 
   return <>
+    <FftSlides />
     <FourierSlides />
     <section on:reveal={anim.start}>
       <div class="flex items-center justify-center">
