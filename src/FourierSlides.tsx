@@ -5,7 +5,6 @@ import { linspace } from './Editor';
 import { Animations, createTweenedNumber } from './animation';
 import { createMemo, createSignal, For, Show } from 'solid-js';
 import { css, oklch, mix } from '@thi.ng/color';
-import { fft } from './fourier';
 
 const func_resolution = 1024;
 
@@ -24,6 +23,33 @@ const EAsin = wavesum(Asin, Esin);
 const manysin = wavesum(Asin, Esin, wave(549), wave(769));
 const manysin2 = wavesum(Asin, wave(115), wave(989), wave(220));
 const complexsum = (zs: Complex[]) => zs.reduce((s, z) => s.add(z), Complex.ZERO);
+
+const audioCtx = new AudioContext();
+const gain = audioCtx.createGain();
+const gain2 = audioCtx.createGain();
+gain.connect(gain2).connect(audioCtx.destination);
+gain2.gain.setValueAtTime(0.3, audioCtx.currentTime);
+let activeOscillators: OscillatorNode[] = [];
+
+function playFreqs(...freqs: number[]): void {
+  const time = audioCtx.currentTime;
+  for (const o of activeOscillators) {
+    o.stop();
+    o.disconnect();
+  }
+  activeOscillators = [];
+  for (const f of freqs) {
+    const oscillator = audioCtx.createOscillator();
+    oscillator.connect(gain);
+    oscillator.frequency.setValueAtTime(f, audioCtx.currentTime);
+    oscillator.start();
+    activeOscillators.push(oscillator);
+  }
+  gain.gain.setValueAtTime(0, time);
+  gain.gain.linearRampToValueAtTime(1, time + 1);
+  gain.gain.linearRampToValueAtTime(1, time + 2);
+  gain.gain.linearRampToValueAtTime(0, time + 3);
+}
 
 const TransformSlide = () => {
   const [func, setFunc] = createSignal((x: number) => Math.sin(x*2*Math.PI*3));
@@ -113,10 +139,18 @@ export const FourierSlides = () => {
     <section>
       <AsciiMath>f(x)=sinAx</AsciiMath>
       <PlotSvg xlabel="t" ylabel="Δ" min={Complex(-1.5, -2)} max={Complex(14, 5)} func={Asin} />
+      <Animations>{[
+        () => {},
+        () => playFreqs(440),
+      ]}</Animations>
     </section>
     <section>
       <AsciiMath>f(x)=sinEx</AsciiMath>
       <PlotSvg xlabel="t" ylabel="Δ" min={Complex(-1.5, -2)} max={Complex(14, 5)} func={Esin} />
+      <Animations>{[
+        () => {},
+        () => playFreqs(329.63),
+      ]}</Animations>
     </section>
     <section>
       <AsciiMath>f(x)=sinEx</AsciiMath>
@@ -131,6 +165,10 @@ export const FourierSlides = () => {
     <section>
       <AsciiMath>f(x)=sinAx+sinEx</AsciiMath>
       <PlotSvg xlabel="t" ylabel="Δ" min={Complex(-1.5, -2)} max={Complex(14, 5)} func={EAsin} />
+      <Animations>{[
+        () => {},
+        () => playFreqs(440, 329.63),
+      ]}</Animations>
     </section>
     <section>
       <AsciiMath>f(x)="bonyi függvény"</AsciiMath>
