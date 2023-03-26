@@ -86,13 +86,14 @@ export const Axes: Component<{
   min: Complex, max: Complex,
 }> = (props) => {
   const p = props;
+  const scale = getScale();
   return <>
     <Arrow from={Complex(p.min.re, 0)} to={Complex(p.max.re, 0)} color="#E04C1F"/>
     <Arrow from={Complex(0, p.min.im)} to={Complex(0, p.max.im)} color="#E04C1F" />
-    <Text size={70} fill="#d02fa0" pos={Complex(p.max.re-0.1, 0.4)} text-anchor="end">
+    <Text size={70} fill="#d02fa0" pos={Complex(p.max.re-20/scale(), 30/scale())} text-anchor="end">
       {p.xlabel}
     </Text>
-    <Text size={70} fill="#d02fa0" pos={Complex(0.2, p.max.im-0.1)} dominant-baseline="hanging">
+    <Text size={70} fill="#d02fa0" pos={Complex(20/scale(), p.max.im-10/scale())} dominant-baseline="hanging">
       {p.ylabel}
     </Text>
   </>;
