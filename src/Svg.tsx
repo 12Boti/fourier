@@ -41,11 +41,11 @@ export const Polygon: Component<{points: Complex[]}> = (props) => {
   />;
 }
 
-export const Polyline: Component<{points: Complex[]}> = (props) => {
-  const [p, other] = splitProps(props, ["points"]);
+export const Polyline: Component<{points: Complex[], opacity?: number}> = (props) => {
+  const [p, other] = splitProps(props, ["points", "opacity"]);
   return <polyline
     points={p.points.map(a => `${a.re},${-a.im}`).join(" ")}
-    stroke={colors.stroke} stroke-width="5" fill='none' vector-effect="non-scaling-stroke"
+    stroke={colors.stroke} stroke-width="5" fill='none' vector-effect="non-scaling-stroke" stroke-opacity={p.opacity ?? "1"}
     {...other}
   />;
 }
@@ -104,12 +104,13 @@ export const Plot: Component<{
   min: Complex, max: Complex,
   func: (x: number) => number,
   resolution?: number,
+  graphOpacity?: number,
 }> = (props) => {
   const p = props;
   const xs = linspace(p.min.re, p.max.re-0.5, p.resolution ?? 1000);
   return <>
     <Axes xlabel={p.xlabel} ylabel={p.ylabel} min={p.min} max={p.max} />
-    <Polyline points={xs.map(x => Complex(x, p.func(x)))} />
+    <Polyline points={xs.map(x => Complex(x, p.func(x)))} opacity={p.graphOpacity ?? 1} />
   </>
 }
 
@@ -118,26 +119,28 @@ export const PlotSvg: Component<{
   min: Complex, max: Complex,
   func: (x: number) => number,
   resolution?: number,
+  graphOpacity?: number,
 }> = (p) => {
   return <Svg min={p.min} max={p.max}>
-    <Plot min={p.min} max={p.max} xlabel={p.xlabel} ylabel={p.ylabel} func={p.func} resolution={p.resolution} />
+    <Plot min={p.min} max={p.max} xlabel={p.xlabel} ylabel={p.ylabel} func={p.func} resolution={p.resolution} graphOpacity={p.graphOpacity ?? 1}/>
   </Svg>
 }
 
-export const Point: Component<{pos: Complex, color: string}> = (p) => {
+export const Point: Component<{pos: Complex, color: string, opacity?: number}> = (p) => {
   const scale = getScale();
-  return <circle cx={p.pos.re} cy={-p.pos.im} r={5/scale()} fill={p.color} />
+  return <circle cx={p.pos.re} cy={-p.pos.im} r={5/scale()} fill={p.color} fill-opacity={p.opacity ?? 1}/>
 }
 
-export const PlotyDoty: Component<{
+export const Points: Component<{
   min: Complex, max: Complex, 
   func: (x: number) => number,
   resolution?: number,
+  pointOpacity?: number,
 }> = (p) => {
   const xs = linspace(p.min.re, p.max.re-0.5, p.resolution ?? 1000).map((x) => Complex(x, p.func(x)));
   return <For each={xs}>
     {(a) => <>
-      <Point pos={a} color={"#E04C1F"}></Point>
+      <Point pos={a} color={"#d4ea10"} opacity={p.pointOpacity ?? 1}></Point>
     </>}
   </For>
 }

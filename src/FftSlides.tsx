@@ -1,5 +1,5 @@
 import AsciiMath from './AsciiMath';
-import { Arrow, Axes, Line, Plot, PlotDottedSvg, PlotSvg, PlotyDoty, Point, Polyline, Svg } from './Svg';
+import { Arrow, Axes, Line, Plot, PlotSvg, Point, Points, Polyline, Svg } from './Svg';
 import { Complex } from 'complex.js';
 import { linspace } from './Editor';
 import { Animations, createTweenedNumber } from './animation';
@@ -9,6 +9,8 @@ import { css, oklch, mix } from '@thi.ng/color';
 
 export const FftSlides = () => {
   const [Eqidx, setEqidx] = createSignal(0);
+  const [graphOpacity, setGraphOpacity] = createTweenedNumber(1, {duration: 800});
+  const [pointOpacity, setPointOpacity] = createTweenedNumber(0, {duration: 800});
   const equations = [
     "hat(g)(f) = int_-oo^oo g(t)e^(-i2pi f t)dt", 
     "hat(g)(f) = int_-oo^oo g(t)(cos(2pift) -sin(2pift)i) dt",
@@ -23,6 +25,19 @@ export const FftSlides = () => {
   return <>
     <section><h1>FFT</h1></section>
     <section>
+      <AsciiMath>f(x)="bonyi függvény"</AsciiMath>
+      <Svg min={Complex(-1.6, -4.5)} max={Complex(18, 6)}>
+        <Plot xlabel="t" ylabel="Δ" min={Complex(0, -4.5)} max={Complex(17, 6)} func={manysin} graphOpacity={graphOpacity()}/>
+        <Points min={Complex(0, -4.5)} max={Complex(17, 6)} func={manysin} resolution={100} pointOpacity={pointOpacity()} />
+      </Svg>
+      <Animations>{[
+            () => {setGraphOpacity(1);setPointOpacity(0);},
+            () => {setPointOpacity(1);},
+            () => {setGraphOpacity(0);},
+        ]}</Animations>
+    </section>
+    <section><h1>DFT</h1></section>
+    <section>
         <div>
             <AsciiMath>{equations[Eqidx()]}</AsciiMath>
         </div>
@@ -32,15 +47,6 @@ export const FftSlides = () => {
             () => {setEqidx(2);},
             () => {setEqidx(3);},
         ]}</Animations>
-    </section>
-    <section>
-      <AsciiMath>f(x)="bonyi függvény"</AsciiMath>
-      <Svg min={Complex(-1.6, -4.5)} max={Complex(18, 6)}>
-        <Plot xlabel="t" ylabel="Δ" min={Complex(-1.5, -4.5)} max={Complex(17, 6)} func={manysin} />
-        <PlotyDoty min={Complex(-1.4, -4.5)} max={Complex(17, 6)} func={manysin} resolution={100}/>
-      </Svg>
-      
-      
     </section>
   </>;
 }
