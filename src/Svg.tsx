@@ -5,6 +5,17 @@ import { linspace } from './Editor';
 
 const SvgScaleContext = createContext<() => number>();
 
+function turnToSubscript(numString: string): string { //This was the easiast way. I am truly sorry
+  const subscriptDigits = ["₀", "₁", "₂", "₃", "₄", "₅", "₆", "₇", "₈", "₉"];
+  let subscriptString = "";
+  for (let i = 0; i < numString.length; i++) {
+    let digit = parseInt(numString[i]);
+    subscriptString += subscriptDigits[digit];
+  }
+  return subscriptString;
+}
+
+
 function getScale() {
   return useContext(SvgScaleContext) ?? (() =>{throw new Error("scale undefined")})();
 }
@@ -69,12 +80,13 @@ export const Arrow: Component<{from: Complex, to: Complex, color: string, headwi
   </>;
 };
 
-export const Text: Component<{children: string, pos: Complex, size: number} & JSX.TextSVGAttributes<SVGTextElement>> = (props) => {
-  const [p, other] = splitProps(props, ["children", "pos", "size"]);
+export const Text: Component<{children: string, pos: Complex, size: number, opacity?: number} & JSX.TextSVGAttributes<SVGTextElement>> = (props) => {
+  const [p, other] = splitProps(props, ["children", "pos", "size", "opacity"]);
   const scale = getScale();
   return <text
     x={p.pos.re} y={-p.pos.im}
     font-size={(p.size/scale()).toString()} vector-effect="non-scaling-stroke"
+    opacity={p.opacity ?? 1}
     {...other}
   >
     {p.children}
@@ -126,9 +138,12 @@ export const PlotSvg: Component<{
   </Svg>
 }
 
-export const Point: Component<{pos: Complex, color: string, opacity?: number}> = (p) => {
+export const Point: Component<{pos: Complex, color: string, opacity?: number, label?: string,}> = (p) => {
   const scale = getScale();
-  return <circle cx={p.pos.re} cy={-p.pos.im} r={5/scale()} fill={p.color} fill-opacity={p.opacity ?? 1}/>
+  return <><circle cx={p.pos.re} cy={-p.pos.im} r={5 / scale()} fill={p.color} fill-opacity={p.opacity ?? 1} /> <Text 
+    size={28} fill={p.color} pos={Complex(p.pos.re + 5/scale(), p.pos.im + 8/scale())} opacity={p.opacity}>
+    {p.label ?? ""}
+  </Text></>
 }
 
 export const Points: Component<{
@@ -139,8 +154,8 @@ export const Points: Component<{
 }> = (p) => {
   const xs = linspace(p.min.re, p.max.re-0.5, p.resolution ?? 1000).map((x) => Complex(x, p.func(x)));
   return <For each={xs}>
-    {(a) => <>
-      <Point pos={a} color={"#d4ea10"} opacity={p.pointOpacity ?? 1}></Point>
+    {(a, i) => <>
+      <Point pos={a} color={"#d4ea10"} opacity={p.pointOpacity ?? 1} label={"X".concat(turnToSubscript(i().toString()))}></Point>
     </>}
   </For>
 }

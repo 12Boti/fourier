@@ -20,7 +20,7 @@ export const FftSlides = () => {
 
   const sum = (...fs: ((x: number) => number)[]) => (x: number) => fs.map(f => f(x)).reduce((s, a) => s + a, 0);
   const wave = (freq: number) => (x: number) => Math.sin(x*freq/250);
-  const manysin = sum(wave(440), wave(329.63), wave(345), wave(549), wave(769));
+  const manysin = sum(wave(440), wave(329.63), /*wave(345),*/ /*wave(549),*/ wave(769));
 
   return <>
     <section><h1>FFT</h1></section>
@@ -28,12 +28,12 @@ export const FftSlides = () => {
       <AsciiMath>f(x)="bonyi függvény"</AsciiMath>
       <Svg min={Complex(-1.6, -4.5)} max={Complex(18, 6)}>
         <Plot xlabel="t" ylabel="Δ" min={Complex(0, -4.5)} max={Complex(17, 6)} func={manysin} graphOpacity={graphOpacity()}/>
-        <Points min={Complex(0, -4.5)} max={Complex(17, 6)} func={manysin} resolution={100} pointOpacity={pointOpacity()} />
+        <Points min={Complex(0, -4.5)} max={Complex(17, 6)} func={manysin} resolution={28} pointOpacity={pointOpacity()} />
       </Svg>
       <Animations>{[
-            () => {setGraphOpacity(1);setPointOpacity(0);},
-            () => {setPointOpacity(1);},
-            () => {setGraphOpacity(0);},
+            () => {setGraphOpacity(1); setPointOpacity(0);},
+            () => {setGraphOpacity(1); setPointOpacity(1);},
+            () => {setGraphOpacity(0); setPointOpacity(1);},
         ]}</Animations>
     </section>
     <section><h1>DFT</h1></section>
