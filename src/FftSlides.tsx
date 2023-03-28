@@ -1,5 +1,5 @@
 import AsciiMath from './AsciiMath';
-import { Arrow, Axes, Line, Plot, PlotSvg, Point, Points, Polyline, Svg, Text } from './Svg';
+import { Arrow, Axes, Line, Plot, PlotSvg, Point, Points, Polyline, Svg, Text, Units } from './Svg';
 import { Complex } from 'complex.js';
 import { linspace } from './Editor';
 import { Animations, createSequence, createTweenedNumber } from './animation';
@@ -50,9 +50,9 @@ export const FftSlides = () => {
     <section><h1>FFT</h1></section>
     <section>
       <AsciiMath>f(x)="bonyi függvény"</AsciiMath>
-      <Svg min={Complex(-1.6, -4.5)} max={Complex(18, 6)}>
-        <Plot xlabel="t" ylabel="Δ" min={Complex(0, -4.5)} max={Complex(17, 6)} func={manysin} graphOpacity={graphOpacity()}/>
-        <Points min={Complex(0, -4.5)} max={Complex(17, 6)} func={manysin} resolution={28} pointOpacity={pointOpacity()} labels={true}/>
+      <Svg min={Complex(-1.6, -4.5)} max={Complex(18, 6)}>        
+        <Plot xlabel="t" ylabel="Δ" min={Complex(0, -4.5)} max={Complex(17, 6)} func={manysin} graphOpacity={graphOpacity()} xUnits={28}/>
+        <Points min={Complex(0, -4.5)} max={Complex(17, 6)} func={manysin} resolution={28} pointOpacity={pointOpacity()} labelSymbol='P'/>
       </Svg>
       <Animations>{[
             () => {setGraphOpacity(1); setPointOpacity(0);},
@@ -131,7 +131,7 @@ export const FftSlides = () => {
       <Svg min={Complex(-1.6, -4.5)} max={Complex(18, 6)}>
         <Plot xlabel="t" ylabel="Δ" min={Complex(0, -4.5)} max={Complex(Math.PI*5 + 0.5 /*We probaly need +0.5 because of the triangle*/, 6)} func={(x) => 3*wave(250)(x)} graphOpacity={lowFreqOpacity()}/>
         <Plot xlabel="t" ylabel="Δ" min={Complex(0, -4.5)} max={Complex(Math.PI*5 + 0.5, 6)} func={(x) => 3*wave(5*250)(x)} graphOpacity={highFreqOpacity()}/>
-        <Points min={Complex(0, -4.5)} max={Complex(Math.PI*5 + 0.5, 6)} func={(x) => 3*wave(250)(x)} resolution={11} pointOpacity={pointFreqOpacity()} labels={true}/>
+        <Points min={Complex(0, -4.5)} max={Complex(Math.PI*5 + 0.5, 6)} func={(x) => 3*wave(250)(x)} resolution={11} pointOpacity={pointFreqOpacity()} labelSymbol='P'/>
       </Svg>
       <Animations>{[
             () => {setLowFreqOpacity(0), setHighFreqOpacity(0); setPointFreqOpacity(1);},

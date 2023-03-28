@@ -37,10 +37,10 @@ export const Svg: Component<{children?: JSX.Element, min: Complex, max: Complex}
   </svg>;;
 };
 
-export const Line: Component<{from: Complex, to: Complex}> = (props) =>
+export const Line: Component<{from: Complex, to: Complex, color?: string, width?: string}> = (props) =>
   <line
     x1={props.from.re} y1={-props.from.im} x2={props.to.re} y2={-props.to.im}
-    stroke={colors.stroke} stroke-width="5" vector-effect="non-scaling-stroke"
+    stroke={props.color ?? colors.stroke} stroke-width={props.width ?? "5"} vector-effect="non-scaling-stroke"
     {...props}
   />;
 
@@ -93,6 +93,24 @@ export const Text: Component<{children: string, pos: Complex, size: number, opac
   </text>
 }
 
+export const Units: Component<{
+  min: Complex, max: Complex,
+  units: number,
+}> = (props) => {
+  
+  const units = linspace(props.min.re, props.max.re-0.5, props.units);
+  return <>
+  <For each={units ?? []}>
+  {(a, i) => <>
+  <Line from={Complex(a, 0.2)} to={Complex(a, -0.2)} color="#E04C1F" width='3'/>
+  <Text pos={Complex(a, -0.4)} size={20} fill={"#59c729"} text-anchor='middle'>
+    {"X".concat(turnToSubscript(i().toString()))}</Text>
+  </>}
+  </For>
+
+</>;
+}
+
 export const Axes: Component<{
   xlabel: string, ylabel: string,
   min: Complex, max: Complex,
@@ -115,6 +133,7 @@ export const Plot: Component<{
   xlabel: string, ylabel: string,
   min: Complex, max: Complex,
   func: (x: number) => number,
+  xUnits?: number,
   resolution?: number,
   graphOpacity?: number,
 }> = (props) => {
@@ -122,6 +141,7 @@ export const Plot: Component<{
   const xs = linspace(p.min.re, p.max.re-0.5, p.resolution ?? 1000);
   return <>
     <Axes xlabel={p.xlabel} ylabel={p.ylabel} min={p.min} max={p.max} />
+    {p.xUnits != null ? <Units min={Complex(p.min.re, 0)} max={Complex(p.max.re, 0)} units={p.xUnits}></Units> : ""}
     <Polyline points={xs.map(x => Complex(x, p.func(x)))} opacity={p.graphOpacity ?? 1} />
   </>
 }
@@ -149,15 +169,16 @@ export const Point: Component<{pos: Complex, color: string, opacity?: number, la
 export const Points: Component<{
   min: Complex, max: Complex, 
   func: (x: number) => number,
-  labels: boolean,
+  labelSymbol: string,
   resolution?: number,
   pointOpacity?: number,
 }> = (p) => {
+  const symbol = p.labelSymbol == null ? "" : p.labelSymbol;
   const xs = linspace(p.min.re, p.max.re-0.5, p.resolution ?? 1000).map((x) => Complex(x, p.func(x)));
   return <For each={xs}>
     {(a, i) => <>
       <Point pos={a} color={"#d4ea10"} opacity={p.pointOpacity ?? 1} 
-      label={p.labels ? "X".concat(turnToSubscript(i().toString())) : ""}/>
+      label={symbol != "" ? symbol.concat(turnToSubscript(i().toString())) : ""}/>
     </>}
   </For>
 }
