@@ -149,13 +149,15 @@ export const Point: Component<{pos: Complex, color: string, opacity?: number, la
 export const Points: Component<{
   min: Complex, max: Complex, 
   func: (x: number) => number,
+  labels: boolean,
   resolution?: number,
   pointOpacity?: number,
 }> = (p) => {
   const xs = linspace(p.min.re, p.max.re-0.5, p.resolution ?? 1000).map((x) => Complex(x, p.func(x)));
   return <For each={xs}>
     {(a, i) => <>
-      <Point pos={a} color={"#d4ea10"} opacity={p.pointOpacity ?? 1} label={"X".concat(turnToSubscript(i().toString()))}></Point>
+      <Point pos={a} color={"#d4ea10"} opacity={p.pointOpacity ?? 1} 
+      label={p.labels ? "X".concat(turnToSubscript(i().toString())) : ""}/>
     </>}
   </For>
 }

@@ -9,19 +9,22 @@ import { css, oklch, mix } from '@thi.ng/color';
 
 export const FftSlides = () => {
   const [Eqidx, setEqidx] = createSignal(0);
-  const [graphOpacity, setGraphOpacity] = createTweenedNumber(1, {duration: 800});
-  const [pointOpacity, setPointOpacity] = createTweenedNumber(0, {duration: 800});
   const equations = [
     "hat(g)(f) = int_-oo^oo g(t)e^(-i2pi f t)dt", 
     "hat(g)(f) = int_-oo^oo g(t)(cos(2pift) -sin(2pift)i) dt",
     "hat(g)(f) = sum_(k=0)^(K-1) x_k(cos(2pifk) -sin(2pifk)i) dt",
     "F_n = sum_(k=0)^(K-1) x_k(cos(2pink) -sin(2pink)i) dt",
   ];
-  const smallRadius = 0.3;
+
+  //bonyi function
+  const [graphOpacity, setGraphOpacity] = createTweenedNumber(1, {duration: 800});
+  const [pointOpacity, setPointOpacity] = createTweenedNumber(0, {duration: 800});
   const sum = (...fs: ((x: number) => number)[]) => (x: number) => fs.map(f => f(x)).reduce((s, a) => s + a, 0);
   const wave = (freq: number) => (x: number) => Math.sin(x*freq/250);
   const manysin = sum(wave(440), wave(329.63), /*wave(345),*/ /*wave(549),*/ wave(769));
-
+  
+  //e^ix
+  const smallRadius = 0.3;
   const [x, setX] = createSignal(0);
   const [coordinateOpacity, setCoordinateOpacity] = createSignal(0);
   const anim = createSequence([
@@ -38,13 +41,18 @@ export const FftSlides = () => {
     "e^(-i2pi f t) = cos(2pifx) - sin(2pifx)i",
   ];
 
+
+  const [lowFreqOpacity, setLowFreqOpacity] = createTweenedNumber(0, {duration: 1000});
+  const [highFreqOpacity, setHighFreqOpacity] = createTweenedNumber(0, {duration: 1000});
+  const [pointFreqOpacity, setPointFreqOpacity] = createTweenedNumber(1, {duration: 800});
+
   return <>
     <section><h1>FFT</h1></section>
     <section>
       <AsciiMath>f(x)="bonyi függvény"</AsciiMath>
       <Svg min={Complex(-1.6, -4.5)} max={Complex(18, 6)}>
         <Plot xlabel="t" ylabel="Δ" min={Complex(0, -4.5)} max={Complex(17, 6)} func={manysin} graphOpacity={graphOpacity()}/>
-        <Points min={Complex(0, -4.5)} max={Complex(17, 6)} func={manysin} resolution={28} pointOpacity={pointOpacity()} />
+        <Points min={Complex(0, -4.5)} max={Complex(17, 6)} func={manysin} resolution={28} pointOpacity={pointOpacity()} labels={true}/>
       </Svg>
       <Animations>{[
             () => {setGraphOpacity(1); setPointOpacity(0);},
@@ -114,6 +122,30 @@ export const FftSlides = () => {
         <Animations>{[
             () => {setEqidx(0);},
             () => {setEqidx(1);},
+            () => {setEqidx(2);},
+        ]}</Animations>
+    </section>
+
+    <section>
+      <AsciiMath>f(x)="bonyi függvény"</AsciiMath>
+      <Svg min={Complex(-1.6, -4.5)} max={Complex(18, 6)}>
+        <Plot xlabel="t" ylabel="Δ" min={Complex(0, -4.5)} max={Complex(Math.PI*5 + 0.5 /*We probaly need +0.5 because of the triangle*/, 6)} func={(x) => 3*wave(250)(x)} graphOpacity={lowFreqOpacity()}/>
+        <Plot xlabel="t" ylabel="Δ" min={Complex(0, -4.5)} max={Complex(Math.PI*5 + 0.5, 6)} func={(x) => 3*wave(5*250)(x)} graphOpacity={highFreqOpacity()}/>
+        <Points min={Complex(0, -4.5)} max={Complex(Math.PI*5 + 0.5, 6)} func={(x) => 3*wave(250)(x)} resolution={11} pointOpacity={pointFreqOpacity()} labels={true}/>
+      </Svg>
+      <Animations>{[
+            () => {setLowFreqOpacity(0), setHighFreqOpacity(0); setPointFreqOpacity(1);},
+            () => {setLowFreqOpacity(1), setHighFreqOpacity(0); setPointFreqOpacity(1);},
+            () => {setLowFreqOpacity(0), setHighFreqOpacity(1); setPointFreqOpacity(1);},
+            () => {setLowFreqOpacity(0.5), setHighFreqOpacity(0.5); setPointFreqOpacity(1);},
+        ]}</Animations>
+    </section>
+
+    <section>
+        <div>
+            <AsciiMath>{equations[Eqidx()]}</AsciiMath>
+        </div>
+        <Animations>{[
             () => {setEqidx(2);},
             () => {setEqidx(3);},
         ]}</Animations>
