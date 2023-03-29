@@ -85,7 +85,7 @@ export const FftSlides = () => {
       <div class="flex items-center justify-center">
         <div style={{ display: "block"}}> 
           <AsciiMath>{`e^(-i2pi*${x().toFixed(2)})`}</AsciiMath> 
-          <AsciiMath>{`theta=-i2pi${x().toFixed(2)}=${(-2*Math.PI*x()).toFixed(2)}`}</AsciiMath>
+          <AsciiMath>{`theta=-i2p${x().toFixed(2)}=${(-2*Math.PI*x()).toFixed(2)}`}</AsciiMath>
         </div>
         <Svg min={Complex(-1.2, -1.2)} max={Complex(1.2, 1.2)} class="w-60%">
           <Axes xlabel='' ylabel='' min={Complex(-1.1, -1.1)} max={Complex(1.2, 1.2)}/>
@@ -220,24 +220,24 @@ export const FftSlides = () => {
 
 
     <section>
-      <div class="w-full">
-        <Svg min={Complex(-3.2, -9)} max={Complex(36, 12)}>
+      <div class="w-full h-full">
+        <Svg min={Complex(-3.2, -20)} max={Complex(36, 12)}>
           <Index each={Array(4)}>
             {(a, i) => <>
-              <Plot xlabel="" ylabel="" min={Complex(0, -2)} max={Complex(Math.PI*5 + 0.5, 3)} func={(x) => 3*wave(100)(x)} graphOpacity={0} 
-              transform={"translate("+(7-translateEvenX()).toString()+", "+(7+i*-5.25).toString()+")"}/>
+              <Plot xlabel="" ylabel="" min={Complex(0, -3)} max={Complex(Math.PI*5 + 0.5, 3.5)} func={(x) => 3*wave(100)(x)} graphOpacity={0} 
+              transform={"translate("+(7-translateEvenX()).toString()+", "+(13+i*-7).toString()+")"}/>
               <Polyline points={linspace(0, Math.PI*5 + 0.5-0.5, 1000).map(x => Complex(x, 3/1.5*cosWave((3-i)*100)(x)))} opacity={0.4} stroke={css(oklch([0.8, 0.221, i*2*Math.PI/8]))} stroke-width="2" 
-              transform={"translate("+(7-translateEvenX()).toString()+", "+(7+i*-5.25).toString()+")"}/>
+              transform={"translate("+(7-translateEvenX()).toString()+", "+(13+i*-7).toString()+")"}/>
 
-              <Plot xlabel="" ylabel="" min={Complex(0, -2)} max={Complex(Math.PI*5 + 0.5, 3)} func={(x) => 3*wave(100)(x)} graphOpacity={0} 
-              transform={"translate("+(7+translateEvenX()).toString()+", "+(7+i*-5.25).toString()+")"}/>
+              <Plot xlabel="" ylabel="" min={Complex(0, -3)} max={Complex(Math.PI*5 + 0.5, 3.5)} func={(x) => 3*wave(100)(x)} graphOpacity={0} 
+              transform={"translate("+(7+translateEvenX()).toString()+", "+(13+i*-7).toString()+")"}/>
               <Polyline points={linspace(0, Math.PI*5 + 0.5-0.5, 1000).map(x => Complex(x, 3/1.5*cosWave((3-i+4)*100)(x)))} opacity={0.4} stroke={css(oklch([0.8, 0.221, i*2*Math.PI/8]))} stroke-width="2" transform={
-                "translate("+(7+translateEvenX()).toString()+", "+(7+i*-5.25).toString()+")"}/>
+                "translate("+(7+translateEvenX()).toString()+", "+(13+i*-7).toString()+")"}/>
 
               <Units min={Complex(0, -2)} max={Complex(Math.PI*5*(6/8) + 0.5, 3)} units={4} 
-              transform={"translate("+(7-translateEvenX()).toString()+", "+(7+i*-5.25).toString()+")"} index={(x: number) => {return 2*x}}/>
+              transform={"translate("+(7-translateEvenX()).toString()+", "+(13+i*-7).toString()+")"} index={(x: number) => {return 2*x}}/>
               <Units min={Complex(0, -2)} max={Complex(Math.PI*5*(6/8) + 0.5, 3)} units={4} 
-              transform={"translate("+(7+translateEvenX()).toString()+", "+(7+i*-5.25).toString()+")"} index={(x: number) => {return 2*x}}/>
+              transform={"translate("+(7+translateEvenX()).toString()+", "+(13+i*-7).toString()+")"} index={(x: number) => {return 2*x}}/>
 
             </>}
           </Index>
@@ -250,24 +250,24 @@ export const FftSlides = () => {
     </section>
 
     <section>
-      <div class="w-full">
-        <Svg min={Complex(-3.2, -9)} max={Complex(36, 12)}>
+      <div class="w-full h-full">
+        <Svg min={Complex(-3.2, -20)} max={Complex(36, 12)}>
           <Index each={Array(4)}>
             {(a, i) => <>
-              <Plot xlabel="" ylabel="" min={Complex(0, -2)} max={Complex(Math.PI*5 + 0.5, 3)} func={(x) => 3*wave(100)(x)} graphOpacity={0} 
-              transform={"translate("+(7-translateOddX()).toString()+", "+(7+i*-5.25).toString()+")"}/>
+              <Plot xlabel="" ylabel="" min={Complex(0, -3)} max={Complex(Math.PI*5 + 0.5, 3.5)} func={(x) => 3*wave(100)(x)} graphOpacity={0} 
+              transform={"translate("+(7-translateOddX()).toString()+", "+(13+i*-7).toString()+")"}/>
               <Polyline points={linspace(0, Math.PI*5 + 0.5-0.5, 1000).map(x => Complex(x, 3/1.5*cosWave((3-i)*100)(x)))} opacity={0.4} stroke={css(oklch([0.8, 0.221, i*2*Math.PI/8]))} stroke-width="2" 
-              transform={"translate("+(7-translateOddX()).toString()+", "+(7+i*-5.25).toString()+")"}/>
+              transform={"translate("+(7-translateOddX()).toString()+", "+(13+i*-7).toString()+")"}/>
 
-              <Plot xlabel="" ylabel="" min={Complex(0, -2)} max={Complex(Math.PI*5 + 0.5, 3)} func={(x) => 3*wave(100)(x)} graphOpacity={0} 
-              transform={"translate("+(7+translateOddX()).toString()+", "+(7+i*-5.25).toString()+")"}/>
+              <Plot xlabel="" ylabel="" min={Complex(0, -3)} max={Complex(Math.PI*5 + 0.5, 3.5)} func={(x) => 3*wave(100)(x)} graphOpacity={0} 
+              transform={"translate("+(7+translateOddX()).toString()+", "+(13+i*-7).toString()+")"}/>
               <Polyline points={linspace(0, Math.PI*5 + 0.5-0.5, 1000).map(x => Complex(x, 3/1.5*cosWave((3-i+4)*100)(x)))} opacity={0.4} stroke={css(oklch([0.8, 0.221, i*2*Math.PI/8]))} stroke-width="2" transform={
-                "translate("+(7+translateOddX()).toString()+", "+(7+i*-5.25).toString()+")"}/>
+                "translate("+(7+translateOddX()).toString()+", "+(13+i*-7).toString()+")"}/>
 
               <Units min={Complex(Math.PI*(5*(1/8)), -4.5)} max={Complex(Math.PI*(5*(7/8)) + 0.5, 6)} units={4} 
-              transform={"translate("+(7-translateOddX()).toString()+", "+(7+i*-5.25).toString()+")"} index={(x: number) => {return 2*x + 1}}/>
+              transform={"translate("+(7-translateOddX()).toString()+", "+(13+i*-7).toString()+")"} index={(x: number) => {return 2*x + 1}}/>
               <Units min={Complex(Math.PI*(5*(1/8)), -4.5)} max={Complex(Math.PI*(5*(7/8)) + 0.5, 6)} units={4} 
-              transform={"translate("+(7+translateOddX()).toString()+", "+(7+i*-5.25).toString()+")"} index={(x: number) => {return 2*x + 1}}/>
+              transform={"translate("+(7+translateOddX()).toString()+", "+(13+i*-7).toString()+")"} index={(x: number) => {return 2*x + 1}}/>
 
             </>}
           </Index>
