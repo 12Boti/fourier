@@ -3,8 +3,9 @@ import { Arrow, Axes, Line, PlotSvg, Point, Polyline, Svg, Text } from './Svg';
 import { Complex } from 'complex.js';
 import { linspace } from './Editor';
 import { Animations, createTweenedNumber } from './animation';
-import { createMemo, createSignal, For, Show } from 'solid-js';
+import { createMemo, createSignal, For, Index, Show } from 'solid-js';
 import { css, oklch, mix } from '@thi.ng/color';
+import createRAF from '@solid-primitives/raf';
 
 const func_resolution = 1024;
 
@@ -83,9 +84,9 @@ const TransformSlide = () => {
       </div>
       <Svg min={Complex(-1.5, -1.5)} max={Complex(1.5, 1.5)} class="h-xs">
           <Show when={constLength() === false}>
-            <For each={[...twisted_values().keys()].slice(1)}>{i =>
-              <Line from={twisted_values()[i-1]} to={twisted_values()[i]} stroke={twistGradient[twisted_values().length-i]} stroke-linecap="round" />
-            }</For>
+            <Index each={[...twisted_values().keys()].slice(1)}>{i =>
+              <Line from={twisted_values()[i()-1]} to={twisted_values()[i()]} stroke={twistGradient[twisted_values().length-i()]} stroke-linecap="round" />
+            }</Index>
           </Show>
           <Show when={showAvg() === true}>
             <Point pos={Complex.ZERO} color="#880000" />
@@ -125,6 +126,35 @@ const TransformSlide = () => {
   ]}</Animations>
   </section>;
 };
+
+const ESlides = () => {
+  const [f, setF] = createTweenedNumber(1, {duration: 10000, ease: x => x});
+  const [arg, setArg] = createSignal(0);
+  let prevTimestamp = performance.now();
+  const [running, start, stop] = createRAF(timestamp => {
+    const dt = (timestamp - prevTimestamp)/1000;
+    prevTimestamp = timestamp;
+    setArg(arg => arg+f()*dt);
+  });
+  start();
+
+  return <>
+    <section>
+      <div class="flex flex-row justify-evenly">
+        <AsciiMath>{`e^(-i2pi*f*t)`}</AsciiMath>
+        <AsciiMath>{`f = ${f().toFixed(1)}`}</AsciiMath>
+      </div>
+      <Svg min={Complex(-1.2, -1.2)} max={Complex(1.2, 1.2)} class="h-xl">
+        <Arrow from={Complex(0,0)} to={Complex({arg: -2*Math.PI*arg(), abs: 1})} color="#00b9e4" />
+      </Svg>
+      <Animations>{[
+        () => {setArg(0);},
+        () => {setF(0);},
+        () => {setF(3);},
+      ]}</Animations>
+    </section>
+  </>;
+}
 
 export const FourierSlides = () => {
 
@@ -179,5 +209,6 @@ export const FourierSlides = () => {
       <PlotSvg xlabel="t" ylabel="Δ" min={Complex(-1.5, -4.5)} max={Complex(17, 6)} func={manysin2} />
     </section>
     <TransformSlide />
+    <ESlides />
   </>;
 }
