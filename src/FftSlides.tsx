@@ -203,10 +203,10 @@ export const FftSlides = () => {
 
     <section>
     <Svg min={Complex(-3.2, -9)} max={Complex(36, 12)}>
-      <Plot xlabel="" ylabel="" min={Complex(0, -4.5)} max={Complex(Math.PI*5 + 0.5, 6)} func={(x) => 3*wave(100)(x)} graphOpacity={0} transform={"translate("+(7-translateX()).toString()+", 0)"}/>
-      <Points min={Complex(Math.PI*(5*(1/8)), -4.5)} max={Complex(Math.PI*(5*(7/8)) + 0.5, 6)} func={(x) => 3*wave(100)(x)} resolution={4} pointOpacity={1} labelSymbol='P' transform={"translate("+(7-translateX()).toString()+", 0)"} index={(x: number) => {return 2*x + 1}}/>
       <Plot xlabel="" ylabel="" min={Complex(0, -4.5)} max={Complex(Math.PI*5 + 0.5, 6)} func={(x) => 3*wave(100)(x)} graphOpacity={0} transform={"translate("+(7+translateX()).toString()+", 0)"}/>
-      <Points min={Complex(0, -4.5)} max={Complex(Math.PI*5*(6/8) + 0.5, 6)} func={(x) => 3*wave(100)(x)} resolution={4} pointOpacity={1} labelSymbol='P' transform={"translate("+(7+translateX()).toString()+", 0)"} index={(x: number) => {return 2*x}}/>
+      <Points min={Complex(Math.PI*(5*(1/8)), -4.5)} max={Complex(Math.PI*(5*(7/8)) + 0.5, 6)} func={(x) => 3*wave(100)(x)} resolution={4} pointOpacity={1} labelSymbol='P' transform={"translate("+(7+translateX()).toString()+", 0)"} index={(x: number) => {return 2*x + 1}}/>
+      <Plot xlabel="" ylabel="" min={Complex(0, -4.5)} max={Complex(Math.PI*5 + 0.5, 6)} func={(x) => 3*wave(100)(x)} graphOpacity={0} transform={"translate("+(7-translateX()).toString()+", 0)"}/>
+      <Points min={Complex(0, -4.5)} max={Complex(Math.PI*5*(6/8) + 0.5, 6)} func={(x) => 3*wave(100)(x)} resolution={4} pointOpacity={1} labelSymbol='P' transform={"translate("+(7-translateX()).toString()+", 0)"} index={(x: number) => {return 2*x}}/>
       <Animations>{[
             () => {setTranslateX(0);},
             () => {setTranslateX(9);},
@@ -224,17 +224,19 @@ export const FftSlides = () => {
             {(a, i) => <>
               <Plot xlabel="" ylabel="" min={Complex(0, -2)} max={Complex(Math.PI*5 + 0.5, 3)} func={(x) => 3*wave(100)(x)} graphOpacity={0} 
               transform={"translate("+(7-translateEvenX()).toString()+", "+(7+i*-5.25).toString()+")"}/>
-              <Points min={Complex(0, -2)} max={Complex(Math.PI*5*(6/8) + 0.5, 2)} func={(x) => 3/1.7*wave(100)(x)} resolution={4} pointOpacity={1} labelSymbol='P' 
-              transform={"translate("+(7-translateEvenX()).toString()+", "+(7+i*-5.25).toString()+")"} index={(x: number) => {return 2*x}}/>
               <Polyline points={linspace(0, Math.PI*5 + 0.5-0.5, 1000).map(x => Complex(x, 3/1.5*cosWave((3-i)*100)(x)))} opacity={0.4} stroke={css(oklch([0.8, 0.221, i*2*Math.PI/8]))} stroke-width="2" 
               transform={"translate("+(7-translateEvenX()).toString()+", "+(7+i*-5.25).toString()+")"}/>
 
               <Plot xlabel="" ylabel="" min={Complex(0, -2)} max={Complex(Math.PI*5 + 0.5, 3)} func={(x) => 3*wave(100)(x)} graphOpacity={0} 
               transform={"translate("+(7+translateEvenX()).toString()+", "+(7+i*-5.25).toString()+")"}/>
-              <Points min={Complex(0, -2)} max={Complex(Math.PI*5*(6/8) + 0.5, 2)} func={(x) => 3/1.7*wave(100)(x)} resolution={4} pointOpacity={1} labelSymbol='P' 
-              transform={"translate("+(7+translateEvenX()).toString()+", "+(7+i*-5.25).toString()+")"} index={(x: number) => {return 2*x}}/>
               <Polyline points={linspace(0, Math.PI*5 + 0.5-0.5, 1000).map(x => Complex(x, 3/1.5*cosWave((3-i+4)*100)(x)))} opacity={0.4} stroke={css(oklch([0.8, 0.221, i*2*Math.PI/8]))} stroke-width="2" transform={
                 "translate("+(7+translateEvenX()).toString()+", "+(7+i*-5.25).toString()+")"}/>
+
+              <Units min={Complex(0, -2)} max={Complex(Math.PI*5*(6/8) + 0.5, 3)} units={4} 
+              transform={"translate("+(7-translateEvenX()).toString()+", "+(7+i*-5.25).toString()+")"} index={(x: number) => {return 2*x}}/>
+              <Units min={Complex(0, -2)} max={Complex(Math.PI*5*(6/8) + 0.5, 3)} units={4} 
+              transform={"translate("+(7+translateEvenX()).toString()+", "+(7+i*-5.25).toString()+")"} index={(x: number) => {return 2*x}}/>
+
             </>}
           </Index>
           <Animations>{[
@@ -244,6 +246,8 @@ export const FftSlides = () => {
         </Svg>
       </div>
     </section>
+
+    
   </>;
 }
 

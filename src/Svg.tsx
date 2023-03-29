@@ -104,15 +104,17 @@ export const Text: Component<{children: string, pos: Complex, size: number, opac
 export const Units: Component<{
   min: Complex, max: Complex,
   units: number,
+  transform?: string,
+  index?: (x: number) => number,
 }> = (props) => {
-  
+  const scale = getScale();
   const units = linspace(props.min.re, props.max.re-0.5, props.units);
   return <>
   <For each={units ?? []}>
   {(a, i) => <>
-  <Line from={Complex(a, 0.2)} to={Complex(a, -0.2)} color="#E04C1F" width='3'/>
-  <Text pos={Complex(a, -0.4)} size={20} fill={"#59c729"} text-anchor='middle'>
-    {"X".concat(turnToSubscript(i().toString()))}</Text>
+  <Line from={Complex(a, 13/scale())} to={Complex(a, -13/scale())} color="#E04C1F" width='3' vector-effect="non-scaling-stroke"  transform={props.transform ?? ""}/>
+  <Text pos={Complex(a, -30/scale())} size={20} fill={"#59c729"} text-anchor='middle' transform={props.transform ?? ""}>
+    {"X".concat(props.index != null ? turnToSubscript(props.index(i()).toString()) : turnToSubscript(i().toString())) }</Text>
   </>}
   </For>
 
