@@ -26,5 +26,6 @@ export const avatar = getAvatar(userid);
 
 export interface UserRecord {
     id: string;
-    number: number;
+    frequency: number;
+    phase: number;
 }

@@ -3,8 +3,9 @@ import { Arrow, Axes, Line, PlotSvg, Point, Polyline, Svg, Text } from './Svg';
 import { Complex } from 'complex.js';
 import { linspace } from './Editor';
 import { Animations, createTweenedNumber } from './animation';
-import { createMemo, createSignal, For, Show } from 'solid-js';
+import { createMemo, createSignal, For, Index, Show } from 'solid-js';
 import { css, oklch, mix } from '@thi.ng/color';
+import createRAF from '@solid-primitives/raf';
 
 const func_resolution = 1024;
 
@@ -65,7 +66,7 @@ const TransformSlide = () => {
   const twisted_values = createMemo(() => func_values().filter((z) => z.re >= 0 && z.re <= time()).map(z => Complex({abs: z.im, arg: -2*Math.PI*spinFreq()*z.re})));
   const avg = () => complexsum(twisted_values()).div(twisted_values().length);
 
-  return <section><div class="grid grid-rows-2 grid-cols-2">
+  return <section><div class="grid grid-rows-2 grid-cols-2 w-full h-full">
     <div class="col-span-2">
       <Svg min={Complex(-0.5, -0.3)} max={Complex(2.1, 0.3)}>
         <Axes xlabel="t" ylabel="" min={Complex(-0.5, -0.3)} max={Complex(2.1, 0.3)} />
@@ -83,9 +84,9 @@ const TransformSlide = () => {
       </div>
       <Svg min={Complex(-1.5, -1.5)} max={Complex(1.5, 1.5)} class="h-xs">
           <Show when={constLength() === false}>
-            <For each={[...twisted_values().keys()].slice(1)}>{i =>
-              <Line from={twisted_values()[i-1]} to={twisted_values()[i]} stroke={twistGradient[twisted_values().length-i]} stroke-linecap="round" />
-            }</For>
+            <Index each={[...twisted_values().keys()].slice(1)}>{i =>
+              <Line from={twisted_values()[i()-1]} to={twisted_values()[i()]} stroke={twistGradient[twisted_values().length-i()]} stroke-linecap="round" />
+            }</Index>
           </Show>
           <Show when={showAvg() === true}>
             <Point pos={Complex.ZERO} color="#880000" />
@@ -126,6 +127,35 @@ const TransformSlide = () => {
   </section>;
 };
 
+const ESlides = () => {
+  const [f, setF] = createTweenedNumber(1, {duration: 10000, ease: x => x});
+  const [arg, setArg] = createSignal(0);
+  let prevTimestamp = performance.now();
+  const [running, start, stop] = createRAF(timestamp => {
+    const dt = (timestamp - prevTimestamp)/1000;
+    prevTimestamp = timestamp;
+    setArg(arg => arg+f()*dt);
+  });
+  start();
+
+  return <>
+    <section>
+      <div class="flex flex-row justify-evenly w-full">
+        <AsciiMath>{`e^(-i2pi*f*t)`}</AsciiMath>
+        <AsciiMath>{`f = ${f().toFixed(1)}`}</AsciiMath>
+      </div>
+      <Svg min={Complex(-1.2, -1.2)} max={Complex(1.2, 1.2)} class="h-xl">
+        <Arrow from={Complex(0,0)} to={Complex({arg: -2*Math.PI*arg(), abs: 1})} color="#00b9e4" />
+      </Svg>
+      <Animations>{[
+        () => {setArg(0);},
+        () => {setF(0);},
+        () => {setF(3);},
+      ]}</Animations>
+    </section>
+  </>;
+}
+
 export const FourierSlides = () => {
 
   return <>
@@ -133,10 +163,9 @@ export const FourierSlides = () => {
     </section>
     <section><h1>Fourier-transzformáció</h1></section>
     <section>
-      <div class="absolute"> Ez itt:
+      <div class="text-7xl text-left"> Ez itt:
       </div>
-      <div class="grid-item"><AsciiMath>hat(g)(f) = int_-oo^oo g(t)e^(-i2pi f t)dt</AsciiMath>
-      </div>
+      <AsciiMath>hat(g)(f) = int_-oo^oo g(t)e^(-i2pi f t)dt</AsciiMath>
     </section>
     <section>
       <AsciiMath>f(x)=sinAx</AsciiMath>
@@ -181,15 +210,6 @@ export const FourierSlides = () => {
       <PlotSvg xlabel="t" ylabel="Δ" min={Complex(-1.5, -4.5)} max={Complex(17, 6)} func={manysin2} />
     </section>
     <TransformSlide />
-    <section>
-    <AsciiMath>hat(g)(f) = int_-oo^oo g(t)e^(-i2pi f t)dt</AsciiMath>
-
-    </section>
-    <section>
-    <AsciiMath>e^(-i2pi f t)</AsciiMath>
-    </section>
-    <section>
-      
-    </section>
+    <ESlides />
   </>;
 }

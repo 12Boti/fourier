@@ -10,6 +10,8 @@ const RevealJs: Component = () => {
     deck = new Reveal();
     await deck.initialize({
       hideInactiveCursor: false, // it's bugged
+      center: false,
+      respondToHashChanges: false,
     });
     deck.on('slidetransitionend', (event) => {
       const currentSlide: HTMLElement = event.currentSlide;

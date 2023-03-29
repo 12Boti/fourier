@@ -186,7 +186,7 @@ const Freqs = () => {
 
     return <>
         <section>
-        <div class="grid grid-cols-8">
+        <div class="grid grid-cols-8 w-full">
             <For each={frow()}>{px =>
                 <div>{px.toFixed(1)}</div>
             }</For>
@@ -386,39 +386,45 @@ const JpgSlides: Component = () => <>
 
         return <>
             <section>
-                <PixelImage
-                    width={8} height={8}
-                    pixels={range2d.map(lofr)} />
-                <PixelImage
-                    width={8} height={8}
-                    pixels={range2d.map(hifr)} />
-                <PixelImage
-                    width={1} height={1}
-                    pixels={[0]} />
+                <div>
+                    <PixelImage
+                        width={8} height={8}
+                        pixels={range2d.map(lofr)} />
+                    <PixelImage
+                        width={8} height={8}
+                        pixels={range2d.map(hifr)} />
+                    <PixelImage
+                        width={1} height={1}
+                        pixels={[0]} />
+                </div>
             </section>
             <section>
-                <PixelImage
-                    width={160} height={160}
-                    pixels={bigrange2d.map(lofr)} />
-                <PixelImage
-                    width={160} height={160}
-                    pixels={bigrange2d.map(hifr)} />
-                <PixelImage
-                    width={1} height={1}
-                    pixels={[0]} />
+                <div>
+                    <PixelImage
+                        width={160} height={160}
+                        pixels={bigrange2d.map(lofr)} />
+                    <PixelImage
+                        width={160} height={160}
+                        pixels={bigrange2d.map(hifr)} />
+                    <PixelImage
+                        width={1} height={1}
+                        pixels={[0]} />
+                </div>
             </section>
             <section>
-            <Show when={duck} keyed>{d => <>
-                <RgbaImage
-                    width={160} height={160}
-                    pixels={multiply(d.data, bigrange2d.map(lofr).map(x => x*1.5+1))} />
-                <RgbaImage
-                    width={160} height={160}
-                    pixels={multiply(d.data, bigrange2d.map(hifr).map(x => x*1.5+1))} />
-                <RgbaImage
-                    width={160} height={160}
-                    pixels={d.data} />
-            </>}</Show>
+                <div>
+                    <Show when={duck} keyed>{d => <>
+                        <RgbaImage
+                            width={160} height={160}
+                            pixels={multiply(d.data, bigrange2d.map(lofr).map(x => x*1.5+1))} />
+                        <RgbaImage
+                            width={160} height={160}
+                            pixels={multiply(d.data, bigrange2d.map(hifr).map(x => x*1.5+1))} />
+                        <RgbaImage
+                            width={160} height={160}
+                            pixels={d.data} />
+                    </>}</Show>
+                </div>
             </section>
         </>
     }}
@@ -430,7 +436,7 @@ const JpgSlides: Component = () => <>
 
         return <>
             <section>
-            <div class="grid grid-cols-8">
+            <div class="grid grid-cols-8 w-full">
                 <For each={row()}>{px =>
                     <PixelImage
                         width={1} height={1}

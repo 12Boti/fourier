@@ -1,6 +1,8 @@
-import { Component, createSignal, createEffect, on } from 'solid-js';
-import Plot from './Plot';
+import Complex from 'complex.js';
+import { Component, createSignal, createEffect, on, For } from 'solid-js';
+import AsciiMath from './AsciiMath';
 import { pb, userid, UserRecord, avatar } from './pocketbase';
+import { Line, Plot, PlotSvg, Svg } from './Svg';
 
 
 
@@ -30,22 +32,39 @@ function createAsyncEffect(deps: (() => any)[], f: () => Promise<void>) {
 }
 
 const Editor: Component = () => {
-
   const [frequency, setFrequency] = createSignal(1);
-  const points = () => linspace(-8, 8, 1000).map((x) => [x, Math.sin(x/Math.PI*frequency())]);
-  createAsyncEffect([frequency], async () => {
-    await pb.collection('users').update<UserRecord>(userid, { number: frequency() });
+  const [phase, setPhase] = createSignal(0);
+
+  createAsyncEffect([frequency, phase], async () => {
+    await pb.collection('users').update<UserRecord>(userid, {
+      frequency: frequency(),
+      phase: phase(),
+    });
   });
 
   
   return (
-    <div>
+    <div class="text-light-500">
+      <img src={avatar} class="w-20 h-20 mx-auto mb-10 pt-2 block"></img>
+      <Svg min={Complex(-3, -2)} max={Complex(3, 2)}>
+        <For each={linspace(-2, 2, 5)}>{x => <>
+          <Line from={Complex(x, -0.2)} to={Complex(x, 0.2)} stroke="#E04C1F" />
+        </>}</For>
+        <Plot
+          func={x => Math.sin((x*frequency() + phase())*Math.PI*2)}
+          min={Complex(-3, -2)} max={Complex(3, 2)}
+          xlabel="" ylabel="" />
+      </Svg>
+      <AsciiMath>{`f = ${frequency().toFixed(1)}`}</AsciiMath>
       <input
-        class="w-full"
-        type="range" min="0.1" max="10" value="1" step="0.1"
+        class="w-11/12 mx-auto block"
+        type="range" min="0.1" max="3" value="1" step="0.1"
         onInput={(e) => setFrequency(+e.currentTarget.value)} />
-      <Plot points={points} minX={-7.5} maxX={7.5} minY={-1.1} maxY={1.1} />
-      <img src={avatar} class="w-xs h-xs"></img>
+      <AsciiMath>{`theta = ${phase().toFixed(1)}`}</AsciiMath>
+      <input
+        class="w-11/12 mx-auto block"
+        type="range" min="0" max="1" value="0" step="0.1"
+        onInput={(e) => setPhase(+e.currentTarget.value)} />
     </div>
   );
 };
