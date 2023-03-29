@@ -25,7 +25,7 @@ export const Svg: Component<{children?: JSX.Element, min: Complex, max: Complex}
   let svg: SVGSVGElement;
   const [scale, setScale] = createSignal(1);
   const ro = new ResizeObserver(entries => {
-    const m = svg.getCTM();
+    const m = svg.getCTM() || svg.getScreenCTM();
     setScale((m?.a || 1)*1.5);
   });
   onMount(() => ro.observe(svg));
@@ -148,13 +148,14 @@ export const Plot: Component<{
   resolution?: number,
   graphOpacity?: number,
   transform?: string,
+  color?: string,
 }> = (props) => {
   const p = props;
   const xs = linspace(p.min.re, p.max.re-0.5, p.resolution ?? 1000);
   return <>
     <Axes xlabel={p.xlabel} ylabel={p.ylabel} min={p.min} max={p.max} transform={p.transform ?? ""}/>
     {p.xUnits != null ? <Units min={Complex(p.min.re, 0)} max={Complex(p.max.re, 0)} units={p.xUnits}></Units> : ""}
-    <Polyline points={xs.map(x => Complex(x, p.func(x)))} opacity={p.graphOpacity ?? 1} transform={p.transform ?? ""}/>
+    <Polyline points={xs.map(x => Complex(x, p.func(x)))} opacity={p.graphOpacity ?? 1} transform={p.transform ?? ""} color={props.color} />
   </>
 }
 

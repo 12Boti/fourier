@@ -28,4 +28,7 @@ export interface UserRecord {
     id: string;
     frequency: number;
     phase: number;
+    frequency2: number;
+    phase2: number;
+    scale2: number;
 }

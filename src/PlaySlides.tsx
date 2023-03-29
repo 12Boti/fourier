@@ -29,7 +29,7 @@ export const PlaySlides = () => {
               <img src={user().avatar} class="w-50"></img>
               <div class="w-full">
                 <PlotSvg
-                  func={x => Math.sin((x*user().frequency + user().phase)*Math.PI*2)}
+                  func={x => Math.sin((x*user().frequency + user().phase)*Math.PI*2)/2 + user().scale2*Math.sin((x*user().frequency2 + user().phase2)*Math.PI*2)/2}
                   min={Complex(-3, -1.1)} max={Complex(3, 1.1)}
                   xlabel="" ylabel="" />
               </div>

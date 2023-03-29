@@ -34,11 +34,17 @@ function createAsyncEffect(deps: (() => any)[], f: () => Promise<void>) {
 const Editor: Component = () => {
   const [frequency, setFrequency] = createSignal(1);
   const [phase, setPhase] = createSignal(0);
+  const [frequency2, setFrequency2] = createSignal(1);
+  const [phase2, setPhase2] = createSignal(0);
+  const [scale2, setScale2] = createSignal(0.5);
 
-  createAsyncEffect([frequency, phase], async () => {
+  createAsyncEffect([frequency, phase, frequency2, phase2, scale2], async () => {
     await pb.collection('users').update<UserRecord>(userid, {
       frequency: frequency(),
       phase: phase(),
+      frequency2: frequency2(),
+      phase2: phase2(),
+      scale2: scale2(),
     });
   });
 
@@ -46,25 +52,48 @@ const Editor: Component = () => {
   return (
     <div class="text-light-500">
       <img src={avatar} class="w-20 h-20 mx-auto mb-10 pt-2 block"></img>
-      <Svg min={Complex(-3, -2)} max={Complex(3, 2)}>
+      <Svg min={Complex(-3, -2.1)} max={Complex(3, 2.1)}>
         <For each={linspace(-2, 2, 5)}>{x => <>
           <Line from={Complex(x, -0.2)} to={Complex(x, 0.2)} stroke="#E04C1F" />
         </>}</For>
         <Plot
-          func={x => Math.sin((x*frequency() + phase())*Math.PI*2)}
-          min={Complex(-3, -2)} max={Complex(3, 2)}
+          func={x => Math.sin((x*frequency() + phase())*Math.PI*2) + scale2()*Math.sin((x*frequency2() + phase2())*Math.PI*2)}
+          min={Complex(-3, -2.1)} max={Complex(3, 2.1)}
           xlabel="" ylabel="" />
+        <Plot
+          func={x => Math.sin((x*frequency() + phase())*Math.PI*2)}
+          min={Complex(-3, -2.1)} max={Complex(3, 2.1)}
+          xlabel="" ylabel="" color="rgba(94, 195, 68, 0.1)" />
+        <Plot
+          func={x => scale2()*Math.sin((x*frequency2() + phase2())*Math.PI*2)}
+          min={Complex(-3, -2.1)} max={Complex(3, 2.1)}
+          xlabel="" ylabel="" color="rgba(243, 110, 208, 0.1)" />
       </Svg>
-      <AsciiMath>{`f = ${frequency().toFixed(1)}`}</AsciiMath>
+      <AsciiMath>{`f_1 = ${frequency().toFixed(1)}`}</AsciiMath>
       <input
         class="w-11/12 mx-auto block"
-        type="range" min="0.1" max="3" value="1" step="0.1"
+        type="range" min="0.1" max="3" value="1" step="0.01"
         onInput={(e) => setFrequency(+e.currentTarget.value)} />
-      <AsciiMath>{`theta = ${phase().toFixed(1)}`}</AsciiMath>
+      <AsciiMath>{`theta_1 = ${phase().toFixed(1)}`}</AsciiMath>
       <input
         class="w-11/12 mx-auto block"
-        type="range" min="0" max="1" value="0" step="0.1"
+        type="range" min="0" max="1" value="0" step="0.01"
         onInput={(e) => setPhase(+e.currentTarget.value)} />
+      <AsciiMath>{`f_2 = ${frequency2().toFixed(1)}`}</AsciiMath>
+      <input
+        class="w-11/12 mx-auto block"
+        type="range" min="0.1" max="3" value="1" step="0.01"
+        onInput={(e) => setFrequency2(+e.currentTarget.value)} />
+      <AsciiMath>{`theta_2 = ${phase2().toFixed(1)}`}</AsciiMath>
+      <input
+        class="w-11/12 mx-auto block"
+        type="range" min="0" max="1" value="0" step="0.01"
+        onInput={(e) => setPhase2(+e.currentTarget.value)} />
+      <AsciiMath>{`s_2 = ${scale2().toFixed(1)}`}</AsciiMath>
+      <input
+        class="w-11/12 mx-auto block"
+        type="range" min="0" max="1" value="0.5" step="0.01"
+        onInput={(e) => setScale2(+e.currentTarget.value)} />
     </div>
   );
 };
