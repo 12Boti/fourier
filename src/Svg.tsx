@@ -37,10 +37,11 @@ export const Svg: Component<{children?: JSX.Element, min: Complex, max: Complex}
   </svg>;;
 };
 
-export const Line: Component<{from: Complex, to: Complex, color?: string, width?: string}> = (props) =>
+export const Line: Component<{from: Complex, to: Complex, color?: string, width?: string, transform?: string,}> = (props) =>
   <line
     x1={props.from.re} y1={-props.from.im} x2={props.to.re} y2={-props.to.im}
     stroke={props.color ?? colors.stroke} stroke-width={props.width ?? "5"} vector-effect="non-scaling-stroke"
+    transform={props.transform  ?? ""}
     {...props}
   />;
 
@@ -52,16 +53,22 @@ export const Polygon: Component<{points: Complex[]}> = (props) => {
   />;
 }
 
-export const Polyline: Component<{points: Complex[], opacity?: number}> = (props) => {
-  const [p, other] = splitProps(props, ["points", "opacity"]);
+export const Polyline: Component<{points: Complex[], opacity?: number, color?: string, transform?: string,}> = (props) => {
+  const [p, other] = splitProps(props, ["points", "opacity", "color"]);
   return <polyline
     points={p.points.map(a => `${a.re},${-a.im}`).join(" ")}
-    stroke={colors.stroke} stroke-width="5" fill='none' vector-effect="non-scaling-stroke" stroke-opacity={p.opacity ?? "1"}
+    stroke={p.color ?? colors.stroke} stroke-width="5" fill='none' vector-effect="non-scaling-stroke" stroke-opacity={p.opacity ?? "1"}
+    transform={props.transform  ?? ""}
     {...other}
   />;
 }
 
-export const Arrow: Component<{from: Complex, to: Complex, color: string, headwidth?: number, headlength?: number}> = (props) => {
+export const Arrow: Component<{
+  from: Complex, to: Complex, 
+  color: string, 
+  headwidth?: number, headlength?: number,
+  transform?: string,
+}> = (props) => {
   const scale = getScale();
   let v = () => {
     const d = props.from.sub(props.to);
@@ -71,22 +78,23 @@ export const Arrow: Component<{from: Complex, to: Complex, color: string, headwi
   let polygon: SVGPolygonElement;
   
   return <>
-    <Line from={props.from} to={props.to.add(v().mul(props.headlength ?? 1))} stroke={props.color} />
+    <Line from={props.from} to={props.to.add(v().mul(props.headlength ?? 1))} stroke={props.color} transform={props.transform ?? ""}/>
     <Polygon ref={polygon} points={[
       props.to,
       props.to.add(v().mul(props.headlength ?? 1).mul(2)).add(v().mul(props.headwidth ?? 1).mul(Complex.I)),
       props.to.add(v().mul(props.headlength ?? 1).mul(2)).add(v().mul(props.headwidth ?? 1).mul(Complex.I).neg())
-    ]} fill={props.color} vector-effect="non-scaling-size" />
+    ]} fill={props.color} vector-effect="non-scaling-size" transform={props.transform ?? ""}/>
   </>;
 };
 
-export const Text: Component<{children: string, pos: Complex, size: number, opacity?: number} & JSX.TextSVGAttributes<SVGTextElement>> = (props) => {
+export const Text: Component<{children: string, pos: Complex, size: number, opacity?: number, transform?: string,} & JSX.TextSVGAttributes<SVGTextElement>> = (props) => {
   const [p, other] = splitProps(props, ["children", "pos", "size", "opacity"]);
   const scale = getScale();
   return <text
     x={p.pos.re} y={-p.pos.im}
     font-size={(p.size/scale()).toString()} vector-effect="non-scaling-stroke"
     opacity={p.opacity ?? 1}
+    transform={props.transform  ?? ""}
     {...other}
   >
     {p.children}
@@ -114,16 +122,17 @@ export const Units: Component<{
 export const Axes: Component<{
   xlabel: string, ylabel: string,
   min: Complex, max: Complex,
+  transform?: string,
 }> = (props) => {
   const p = props;
   const scale = getScale();
   return <>
-    <Arrow from={Complex(p.min.re, 0)} to={Complex(p.max.re, 0)} color="#E04C1F"/>
-    <Arrow from={Complex(0, p.min.im)} to={Complex(0, p.max.im)} color="#E04C1F" />
-    <Text size={70} fill="#d02fa0" pos={Complex(p.max.re-20/scale(), 30/scale())} text-anchor="end">
+    <Arrow from={Complex(p.min.re, 0)} to={Complex(p.max.re, 0)} color="#E04C1F" transform={props.transform ?? ""}/>
+    <Arrow from={Complex(0, p.min.im)} to={Complex(0, p.max.im)} color="#E04C1F" transform={props.transform ?? ""}/>
+    <Text size={70} fill="#d02fa0" pos={Complex(p.max.re-20/scale(), 30/scale())} text-anchor="end" transform={props.transform ?? ""}>
       {p.xlabel}
     </Text>
-    <Text size={70} fill="#d02fa0" pos={Complex(20/scale(), p.max.im-10/scale())} dominant-baseline="hanging">
+    <Text size={70} fill="#d02fa0" pos={Complex(20/scale(), p.max.im-10/scale())} dominant-baseline="hanging" transform={props.transform ?? ""}>
       {p.ylabel}
     </Text>
   </>;
@@ -136,13 +145,14 @@ export const Plot: Component<{
   xUnits?: number,
   resolution?: number,
   graphOpacity?: number,
+  transform?: string,
 }> = (props) => {
   const p = props;
   const xs = linspace(p.min.re, p.max.re-0.5, p.resolution ?? 1000);
   return <>
-    <Axes xlabel={p.xlabel} ylabel={p.ylabel} min={p.min} max={p.max} />
+    <Axes xlabel={p.xlabel} ylabel={p.ylabel} min={p.min} max={p.max} transform={p.transform ?? ""}/>
     {p.xUnits != null ? <Units min={Complex(p.min.re, 0)} max={Complex(p.max.re, 0)} units={p.xUnits}></Units> : ""}
-    <Polyline points={xs.map(x => Complex(x, p.func(x)))} opacity={p.graphOpacity ?? 1} />
+    <Polyline points={xs.map(x => Complex(x, p.func(x)))} opacity={p.graphOpacity ?? 1} transform={p.transform ?? ""}/>
   </>
 }
 
@@ -158,11 +168,12 @@ export const PlotSvg: Component<{
   </Svg>
 }
 
-export const Point: Component<{pos: Complex, color: string, opacity?: number, label?: string,}> = (p) => {
+export const Point: Component<{pos: Complex, color: string, opacity?: number, label?: string, transform?: string,}> = (p) => {
   const scale = getScale();
-  return <><circle cx={p.pos.re} cy={-p.pos.im} r={5 / scale()} fill={p.color} fill-opacity={p.opacity ?? 1} /> <Text 
-    size={28} fill={p.color} pos={Complex(p.pos.re + 5/scale(), p.pos.im + 8/scale())} opacity={p.opacity}>
-    {p.label ?? ""}
+  return <><circle cx={p.pos.re} cy={-p.pos.im} r={5 / scale()} fill={p.color} fill-opacity={p.opacity ?? 1} transform={p.transform ?? ""}/> 
+  <Text 
+    transform={p.transform  ?? ""} size={28} fill={p.color} pos={Complex(p.pos.re + 5/scale(), p.pos.im + 8/scale())} opacity={p.opacity}>
+    {p.label ?? ""} 
   </Text></>
 }
 
@@ -172,13 +183,17 @@ export const Points: Component<{
   labelSymbol: string,
   resolution?: number,
   pointOpacity?: number,
+  transform?: string,
+  index?: (x: number) => number,
 }> = (p) => {
   const symbol = p.labelSymbol == null ? "" : p.labelSymbol;
   const xs = linspace(p.min.re, p.max.re-0.5, p.resolution ?? 1000).map((x) => Complex(x, p.func(x)));
   return <For each={xs}>
     {(a, i) => <>
       <Point pos={a} color={"#d4ea10"} opacity={p.pointOpacity ?? 1} 
-      label={symbol != "" ? symbol.concat(turnToSubscript(i().toString())) : ""}/>
+      label={symbol != "" ? 
+      symbol.concat(p.index != null ? turnToSubscript(p.index(i()).toString()) : turnToSubscript(i().toString())) 
+      : ""} transform={p.transform  ?? ""}/>
     </>}
   </For>
 }

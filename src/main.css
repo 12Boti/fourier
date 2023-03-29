@@ -31,6 +31,13 @@ html, body {
   height: 70%;
 }
 
+.freqs{
+  height: 100%;
+  margin: auto;
+  white-space: nowrap;
+  padding: 0;
+}
+
 @keyframes scrolling-grid {
   0% {
     transform: translateY(-1%);

@@ -3,7 +3,7 @@ import { Arrow, Axes, Line, Plot, PlotSvg, Point, Points, Polyline, Svg, Text, U
 import { Complex } from 'complex.js';
 import { linspace } from './Editor';
 import { Animations, createSequence, createTweenedNumber } from './animation';
-import { createMemo, createSignal, For, Show } from 'solid-js';
+import { createMemo, createSignal, For, Index, Show } from 'solid-js';
 import { css, oklch, mix } from '@thi.ng/color';
 
 
@@ -21,6 +21,7 @@ export const FftSlides = () => {
   const [pointOpacity, setPointOpacity] = createTweenedNumber(0, {duration: 800});
   const sum = (...fs: ((x: number) => number)[]) => (x: number) => fs.map(f => f(x)).reduce((s, a) => s + a, 0);
   const wave = (freq: number) => (x: number) => Math.sin(x*freq/250);
+  const cosWave = (freq: number) => (x: number) => Math.cos(x*freq/250);
   const manysin = sum(wave(440), wave(329.63), /*wave(345),*/ /*wave(549),*/ wave(769));
   
   //e^ix
@@ -36,15 +37,23 @@ export const FftSlides = () => {
   const [corEqidx, setCorEqidx] = createSignal(0);
   const coordinateCalcs = [
     "",
-    "(x;y) = (cos(-2pifx); sin(-2pifx))",
-    "(x;y) = (cos(2pifx); -sin(2pifx))",
-    "e^(-i2pi f t) = cos(2pifx) - sin(2pifx)i",
+    "(x;y) = (cos(-2pfx); sin(-2pfx))",
+    "(x;y) = (cos(2pfx); -sin(2pfx))",
+    "e^(-i2pi f t) = cos(2pfx) - sin(2pfx)i",
   ];
 
 
   const [lowFreqOpacity, setLowFreqOpacity] = createTweenedNumber(0, {duration: 1000});
   const [highFreqOpacity, setHighFreqOpacity] = createTweenedNumber(0, {duration: 1000});
   const [pointFreqOpacity, setPointFreqOpacity] = createTweenedNumber(1, {duration: 800});
+
+  const [freqs, setFreqs] = createSignal(0);
+  const testFrequensies = [[0],[1,2,3], [0,1,2], [1,2,3,], [0,1], [1,2,3], [0,1,2], [1,2,3]];
+  const [circlesOpacity, setCirclesOpacity] = createTweenedNumber(0, {duration: 1000});
+
+  const [translateX, setTranslateX] = createTweenedNumber(0, {duration: 1000});
+
+  const [translateEvenX, setTranslateEvenX] = createTweenedNumber(9, {duration: 1000});
 
   return <>
     <section><h1>FFT</h1></section>
@@ -149,6 +158,91 @@ export const FftSlides = () => {
             () => {setEqidx(2);},
             () => {setEqidx(3);},
         ]}</Animations>
+    </section>
+
+    <section>
+    <Svg min={Complex(-1.6, -4.5)} max={Complex(18, 6)}>
+    <Plot xlabel="t" ylabel="Δ" min={Complex(0, -4.5)} max={Complex(Math.PI*5 + 0.5, 6)} func={(x) => 3*wave(100)(x)} graphOpacity={1}/>
+    <Index each={Array(freqs())}>
+      {(a, i) => <>
+        <Polyline points={linspace(0, Math.PI*5 + 0.5-0.5, 1000).map(x => Complex(x, 3*cosWave(i*100)(x)))}
+        opacity={0.4} stroke={css(oklch([0.8, 0.221, i*2*Math.PI/8]))} stroke-width="2"/>
+      </>}
+    </Index>
+    <Index each={Array(8)}>
+      {(a, i) => <>
+        <For each={testFrequensies[i]}>
+          {(b) => <>
+            <circle 
+            cx={linspace(0, Math.PI*5*(7/8) + 0.5-0.5, 8)[i]} 
+            cy={-3*cosWave(b*100)(linspace(0, Math.PI*5*(7/8) + 0.5-0.5, 8)[i])}
+            r="0.3"
+            fill="none" stroke-width={3} stroke='red' vector-effect="non-scaling-stroke" opacity={circlesOpacity()}
+            />
+          </>}
+        </For>
+      </>}
+    </Index>
+    <Points min={Complex(0, -4.5)} max={Complex(Math.PI*5*(7/8) + 0.5, 6)} func={(x) => 3*wave(100)(x)} resolution={8} pointOpacity={1} labelSymbol='P'/>
+    <Animations>{[
+      () => {setFreqs(0);},
+      () => {setFreqs(1);},
+      () => {setFreqs(2);},
+      () => {setFreqs(3);},
+      () => {setFreqs(4);},
+      () => {setFreqs(5);},
+      () => {setFreqs(6);},
+      () => {setFreqs(7);},
+      () => {setFreqs(8); setCirclesOpacity(0);},
+      () => {setFreqs(8); setCirclesOpacity(1);},
+      ]}</Animations>
+    </Svg>
+    </section>
+
+
+
+    <section>
+    <Svg min={Complex(-3.2, -9)} max={Complex(36, 12)}>
+      <Plot xlabel="" ylabel="" min={Complex(0, -4.5)} max={Complex(Math.PI*5 + 0.5, 6)} func={(x) => 3*wave(100)(x)} graphOpacity={0} transform={"translate("+(7-translateX()).toString()+", 0)"}/>
+      <Points min={Complex(Math.PI*(5*(1/8)), -4.5)} max={Complex(Math.PI*(5*(7/8)) + 0.5, 6)} func={(x) => 3*wave(100)(x)} resolution={4} pointOpacity={1} labelSymbol='P' transform={"translate("+(7-translateX()).toString()+", 0)"} index={(x: number) => {return 2*x + 1}}/>
+      <Plot xlabel="" ylabel="" min={Complex(0, -4.5)} max={Complex(Math.PI*5 + 0.5, 6)} func={(x) => 3*wave(100)(x)} graphOpacity={0} transform={"translate("+(7+translateX()).toString()+", 0)"}/>
+      <Points min={Complex(0, -4.5)} max={Complex(Math.PI*5*(6/8) + 0.5, 6)} func={(x) => 3*wave(100)(x)} resolution={4} pointOpacity={1} labelSymbol='P' transform={"translate("+(7+translateX()).toString()+", 0)"} index={(x: number) => {return 2*x}}/>
+      <Animations>{[
+            () => {setTranslateX(0);},
+            () => {setTranslateX(9);},
+      ]}</Animations>
+    </Svg>
+    </section>
+
+
+
+
+    <section>
+      <div class="freqs">
+        <Svg min={Complex(-3.2, -9)} max={Complex(36, 12)}>
+          <Index each={Array(4)}>
+            {(a, i) => <>
+              <Plot xlabel="" ylabel="" min={Complex(0, -2)} max={Complex(Math.PI*5 + 0.5, 3)} func={(x) => 3*wave(100)(x)} graphOpacity={0} 
+              transform={"translate("+(7-translateEvenX()).toString()+", "+(7+i*-5.25).toString()+")"}/>
+              <Points min={Complex(0, -2)} max={Complex(Math.PI*5*(6/8) + 0.5, 2)} func={(x) => 3/1.7*wave(100)(x)} resolution={4} pointOpacity={1} labelSymbol='P' 
+              transform={"translate("+(7-translateEvenX()).toString()+", "+(7+i*-5.25).toString()+")"} index={(x: number) => {return 2*x}}/>
+              <Polyline points={linspace(0, Math.PI*5 + 0.5-0.5, 1000).map(x => Complex(x, 3/1.5*cosWave((3-i)*100)(x)))} opacity={0.4} stroke={css(oklch([0.8, 0.221, i*2*Math.PI/8]))} stroke-width="2" 
+              transform={"translate("+(7-translateEvenX()).toString()+", "+(7+i*-5.25).toString()+")"}/>
+
+              <Plot xlabel="" ylabel="" min={Complex(0, -2)} max={Complex(Math.PI*5 + 0.5, 3)} func={(x) => 3*wave(100)(x)} graphOpacity={0} 
+              transform={"translate("+(7+translateEvenX()).toString()+", "+(7+i*-5.25).toString()+")"}/>
+              <Points min={Complex(0, -2)} max={Complex(Math.PI*5*(6/8) + 0.5, 2)} func={(x) => 3/1.7*wave(100)(x)} resolution={4} pointOpacity={1} labelSymbol='P' 
+              transform={"translate("+(7+translateEvenX()).toString()+", "+(7+i*-5.25).toString()+")"} index={(x: number) => {return 2*x}}/>
+              <Polyline points={linspace(0, Math.PI*5 + 0.5-0.5, 1000).map(x => Complex(x, 3/1.5*cosWave((3-i+4)*100)(x)))} opacity={0.4} stroke={css(oklch([0.8, 0.221, i*2*Math.PI/8]))} stroke-width="2" transform={
+                "translate("+(7+translateEvenX()).toString()+", "+(7+i*-5.25).toString()+")"}/>
+            </>}
+          </Index>
+          <Animations>{[
+            () => {setTranslateEvenX(9);},
+            () => {setTranslateEvenX(0);},
+          ]}</Animations>
+        </Svg>
+      </div>
     </section>
   </>;
 }
