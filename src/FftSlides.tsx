@@ -57,6 +57,10 @@ export const FftSlides = () => {
 
   const [translateOddX, setTranslateOddX] = createTweenedNumber(9, {duration: 1000});
 
+  const [translateMultiX, setTranslateMultiX] = createTweenedNumber(0, {duration: 1000});
+  const [translateMultiY1, setTranslateMultiY1] = createTweenedNumber(0, {duration: 1000});
+  const [translateMultiY2, setTranslateMultiY2] = createTweenedNumber(0, {duration: 1000});
+
   return <>
     <section><h1>FFT</h1></section>
     <section>
@@ -274,6 +278,37 @@ export const FftSlides = () => {
           <Animations>{[
             () => {setTranslateOddX(9);},
             () => {setTranslateOddX(0);},
+          ]}</Animations>
+        </Svg>
+      </div>
+    </section>
+
+
+
+    <section>
+      <div class="w-full h-full">
+        <Svg min={Complex(-3.2, -20)} max={Complex(36, 12)}>
+          <Index each={Array(8)}>
+            {(a, i) => <>
+              <Plot xlabel="" ylabel="" min={Complex(0, -3)} max={Complex(Math.PI*5 + 0.5, 3.5)} func={(x) => 3*wave(100)(x)} graphOpacity={0} 
+              transform={"translate("+((39.2-(Math.PI*5))/2-translateMultiX()*-1*(2*(i%2)-1)-3).toString()+", "+ 
+              (2.5 + (i%4 == 1 || i%4 == 2 ? -1 : 1)*(i < 4 ? translateMultiY1() : translateMultiY2())).toString()
+              +")"}/>
+            </>}
+          </Index>
+          <Index each={Array(8)}>
+            {(a, i) => <>
+              <Point pos={linspace(0, Math.PI*(5*(7/8)), 8).map((x) => Complex(x, 3*wave(100)(x)))[i]} color={"#d4ea10"} label={"P"+i.toString()}
+              transform={"translate("+((39.2-(Math.PI*5))/2-translateMultiX()*-1*(2*(i%2)-1)-3).toString()+", "+ 
+              (2.5 + (i%4 == 1 || i%4 == 2 ? -1 : 1)*(i < 4 ? translateMultiY1() : translateMultiY2())).toString()
+              +")"}/>
+            </>}
+          </Index>
+          <Animations>{[
+            () => {setTranslateMultiX(0); setTranslateMultiY1(0); setTranslateMultiY2(0);},
+            () => {setTranslateMultiX(9); setTranslateMultiY1(0); setTranslateMultiY2(0);},
+            () => {setTranslateMultiX(9); setTranslateMultiY1(3.5); setTranslateMultiY2(3.5);},
+            () => {setTranslateMultiX(9); setTranslateMultiY1(3.5); setTranslateMultiY2(10.5);},
           ]}</Animations>
         </Svg>
       </div>
