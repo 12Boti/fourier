@@ -55,6 +55,8 @@ export const FftSlides = () => {
 
   const [translateEvenX, setTranslateEvenX] = createTweenedNumber(9, {duration: 1000});
 
+  const [translateOddX, setTranslateOddX] = createTweenedNumber(9, {duration: 1000});
+
   return <>
     <section><h1>FFT</h1></section>
     <section>
@@ -247,7 +249,35 @@ export const FftSlides = () => {
       </div>
     </section>
 
-    
+    <section>
+      <div class="freqs">
+        <Svg min={Complex(-3.2, -9)} max={Complex(36, 12)}>
+          <Index each={Array(4)}>
+            {(a, i) => <>
+              <Plot xlabel="" ylabel="" min={Complex(0, -2)} max={Complex(Math.PI*5 + 0.5, 3)} func={(x) => 3*wave(100)(x)} graphOpacity={0} 
+              transform={"translate("+(7-translateOddX()).toString()+", "+(7+i*-5.25).toString()+")"}/>
+              <Polyline points={linspace(0, Math.PI*5 + 0.5-0.5, 1000).map(x => Complex(x, 3/1.5*cosWave((3-i)*100)(x)))} opacity={0.4} stroke={css(oklch([0.8, 0.221, i*2*Math.PI/8]))} stroke-width="2" 
+              transform={"translate("+(7-translateOddX()).toString()+", "+(7+i*-5.25).toString()+")"}/>
+
+              <Plot xlabel="" ylabel="" min={Complex(0, -2)} max={Complex(Math.PI*5 + 0.5, 3)} func={(x) => 3*wave(100)(x)} graphOpacity={0} 
+              transform={"translate("+(7+translateOddX()).toString()+", "+(7+i*-5.25).toString()+")"}/>
+              <Polyline points={linspace(0, Math.PI*5 + 0.5-0.5, 1000).map(x => Complex(x, 3/1.5*cosWave((3-i+4)*100)(x)))} opacity={0.4} stroke={css(oklch([0.8, 0.221, i*2*Math.PI/8]))} stroke-width="2" transform={
+                "translate("+(7+translateOddX()).toString()+", "+(7+i*-5.25).toString()+")"}/>
+
+              <Units min={Complex(Math.PI*(5*(1/8)), -4.5)} max={Complex(Math.PI*(5*(7/8)) + 0.5, 6)} units={4} 
+              transform={"translate("+(7-translateOddX()).toString()+", "+(7+i*-5.25).toString()+")"} index={(x: number) => {return 2*x + 1}}/>
+              <Units min={Complex(Math.PI*(5*(1/8)), -4.5)} max={Complex(Math.PI*(5*(7/8)) + 0.5, 6)} units={4} 
+              transform={"translate("+(7+translateOddX()).toString()+", "+(7+i*-5.25).toString()+")"} index={(x: number) => {return 2*x + 1}}/>
+
+            </>}
+          </Index>
+          <Animations>{[
+            () => {setTranslateOddX(9);},
+            () => {setTranslateOddX(0);},
+          ]}</Animations>
+        </Svg>
+      </div>
+    </section>
   </>;
 }
 
