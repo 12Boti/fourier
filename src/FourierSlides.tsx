@@ -129,6 +129,8 @@ const TransformSlide = () => {
 export const FourierSlides = () => {
 
   return <>
+    <section><h1>Hogyan turmixoljunk visszafele egy smoothiet?</h1>
+    </section>
     <section><h1>Fourier-transzformáció</h1></section>
     <section>
       <div class="absolute"> Ez itt:
@@ -179,5 +181,15 @@ export const FourierSlides = () => {
       <PlotSvg xlabel="t" ylabel="Δ" min={Complex(-1.5, -4.5)} max={Complex(17, 6)} func={manysin2} />
     </section>
     <TransformSlide />
+    <section>
+    <AsciiMath>hat(g)(f) = int_-oo^oo g(t)e^(-i2pi f t)dt</AsciiMath>
+
+    </section>
+    <section>
+    <AsciiMath>e^(-i2pi f t)</AsciiMath>
+    </section>
+    <section>
+      
+    </section>
   </>;
 }
