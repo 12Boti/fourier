@@ -220,7 +220,7 @@ export const FftSlides = () => {
 
 
     <section>
-      <div class="freqs">
+      <div class="w-full">
         <Svg min={Complex(-3.2, -9)} max={Complex(36, 12)}>
           <Index each={Array(4)}>
             {(a, i) => <>
@@ -250,7 +250,7 @@ export const FftSlides = () => {
     </section>
 
     <section>
-      <div class="freqs">
+      <div class="w-full">
         <Svg min={Complex(-3.2, -9)} max={Complex(36, 12)}>
           <Index each={Array(4)}>
             {(a, i) => <>

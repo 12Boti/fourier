@@ -3,11 +3,14 @@ import { ReactiveMap } from "@solid-primitives/map";
 import { pb, UserRecord, getAvatar } from './pocketbase';
 import { linspace } from "./Editor";
 import { UnsubscribeFunc } from "pocketbase";
-import { createMemo, For, onCleanup } from "solid-js";
+import { createMemo, For, Index, onCleanup } from "solid-js";
+import Complex from "complex.js";
+import { PlotSvg } from "./Svg";
 
 export const PlaySlides = () => {
   const userMap = new ReactiveMap<string, UserRecord & {avatar: string}>();
   const users = createMemo(() => [...userMap.values()]);
+  const shouldScroll = () => users().length >= 3;
 
   let unsubscribe: UnsubscribeFunc | null = null;
   (async () => {
@@ -19,17 +22,20 @@ export const PlaySlides = () => {
 
   return <>
     <section>
-      <div class="grid-container">
-        <For each={users().concat(users())}>
+      <div classList={{"scrolling-grid": shouldScroll()}} class="absolute top-0 w-full">
+        <Index each={shouldScroll() ? users().concat(users()) : users()}>
           {(user) => (
-            <div class="grid-row">
-              <img src={user.avatar} class="grid-item"></img>
-              <div class="grid-item-func">
-                <Plot points={() => linspace(-8, 8, 1000).map((x) => [x, Math.sin(x/Math.PI*user.number)])} minX={-7.5} maxX={7.5} minY={-1.1} maxY={1.1} />
+            <div class="w-full flex flex-row">
+              <img src={user().avatar} class="w-50"></img>
+              <div class="w-full">
+                <PlotSvg
+                  func={x => Math.sin((x*user().frequency + user().phase)*Math.PI*2)}
+                  min={Complex(-3, -1.1)} max={Complex(3, 1.1)}
+                  xlabel="" ylabel="" />
               </div>
             </div>
           )}
-        </For>
+        </Index>
       </div>
     </section>
   </>;

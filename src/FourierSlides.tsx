@@ -66,7 +66,7 @@ const TransformSlide = () => {
   const twisted_values = createMemo(() => func_values().filter((z) => z.re >= 0 && z.re <= time()).map(z => Complex({abs: z.im, arg: -2*Math.PI*spinFreq()*z.re})));
   const avg = () => complexsum(twisted_values()).div(twisted_values().length);
 
-  return <section><div class="grid grid-rows-2 grid-cols-2">
+  return <section><div class="grid grid-rows-2 grid-cols-2 w-full h-full">
     <div class="col-span-2">
       <Svg min={Complex(-0.5, -0.3)} max={Complex(2.1, 0.3)}>
         <Axes xlabel="t" ylabel="" min={Complex(-0.5, -0.3)} max={Complex(2.1, 0.3)} />
@@ -140,7 +140,7 @@ const ESlides = () => {
 
   return <>
     <section>
-      <div class="flex flex-row justify-evenly">
+      <div class="flex flex-row justify-evenly w-full">
         <AsciiMath>{`e^(-i2pi*f*t)`}</AsciiMath>
         <AsciiMath>{`f = ${f().toFixed(1)}`}</AsciiMath>
       </div>
@@ -161,10 +161,9 @@ export const FourierSlides = () => {
   return <>
     <section><h1>Fourier-transzformáció</h1></section>
     <section>
-      <div class="absolute"> Ez itt:
+      <div class="text-7xl text-left"> Ez itt:
       </div>
-      <div class="grid-item"><AsciiMath>hat(g)(f) = int_-oo^oo g(t)e^(-i2pi f t)dt</AsciiMath>
-      </div>
+      <AsciiMath>hat(g)(f) = int_-oo^oo g(t)e^(-i2pi f t)dt</AsciiMath>
     </section>
     <section>
       <AsciiMath>f(x)=sinAx</AsciiMath>
