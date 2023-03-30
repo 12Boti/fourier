@@ -7,7 +7,16 @@ import { createMemo, createSignal, For, Index, Show } from 'solid-js';
 import { css, oklch, mix } from '@thi.ng/color';
 import * as colors from './colors';
 
-//import seismograph from '../images/seismograph.png';
+import ABomb from '../images/Atmoic-Bomb-US.png';
+import falloutExposure from '../images/US_fallout_exposure.png';
+import hydrophone from '../images/hydrophone.png';
+import instrument from '../images/seismographInstrument.png';
+import NumberOfEarthquakes from '../images/Number-of-earthquakes-per-year-worldwide-source-IRIS.png';
+import seismograph from '../images/seismograph.png';
+import explosionVsearthquake from '../images/explosionVsearthquake.png';
+import Tukey from '../images/John_Tukey.png';
+import Cooley from '../images/James_Cooley.png';
+import Gauss from '../images/Carl_Friedrich_Gauss.png';
 
 
 export const FftSlides = () => {
@@ -74,7 +83,25 @@ export const FftSlides = () => {
   return <>
     <section><h1>FFT</h1></section>
     <section>
-      <image href={pepeJpg} x="-1" y="-1" width="2" height="2" class="image-render-pixel" />
+      <img src={ABomb}/>
+    </section>
+    <section>
+      <img src={falloutExposure}/>
+    </section>
+    <section>
+      <img src={hydrophone}/>
+    </section>
+    <section>
+      <img src={instrument}/>
+    </section>
+    <section>
+      <img src={NumberOfEarthquakes}/>
+    </section>
+    <section>
+      <img src={seismograph}/>
+    </section>
+    <section>
+      <img src={explosionVsearthquake}/>
     </section>
     <section>
       <AsciiMath>f(x)="bonyi függvény"</AsciiMath>
@@ -236,7 +263,10 @@ export const FftSlides = () => {
       ]}</Animations>
     </section>
 
-
+    <section style={"flex-direction: row;"}>
+      <img src={Tukey} style={"float: left; width: auto; height: 50%;"}/>
+      <img src={Cooley} style={"float: left; width: auto; height: 50%;"}/>
+    </section>
 
     <section>
     <Svg min={Complex(-1.6, -4.5)} max={Complex(18, 6)}>
@@ -402,6 +432,10 @@ export const FftSlides = () => {
           ]}</Animations>
         </Svg>
       </div>
+    </section>
+
+    <section>
+      <img src={Gauss}/>
     </section>
   </>;
 }
