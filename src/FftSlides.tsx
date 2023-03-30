@@ -44,9 +44,9 @@ export const FftSlides = () => {
   ];
 
   const [theta, setTheta] = createTweenedNumber((1/8), {duration: 5000});
-  const [arrowOpacity, setArrowOpacity] = createTweenedNumber(0, {duration: 5000});
-  const [circleOpacity, setCircleOpacity] = createTweenedNumber(0, {duration: 5000});
-  const [othePlotOpacity, setOthePlotOpacity] = createTweenedNumber(0, {duration: 5000});
+  const [arrowOpacity, setArrowOpacity] = createTweenedNumber(0, {duration: 1000});
+  const [circleOpacity, setCircleOpacity] = createTweenedNumber(0, {duration: 1000});
+  const [othePlotOpacity, setOthePlotOpacity] = createTweenedNumber(0, {duration: 1000});
 
   const [lowFreqOpacity, setLowFreqOpacity] = createTweenedNumber(0, {duration: 1000});
   const [highFreqOpacity, setHighFreqOpacity] = createTweenedNumber(0, {duration: 1000});
