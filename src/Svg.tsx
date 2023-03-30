@@ -109,6 +109,7 @@ export const Units: Component<{
   units: number,
   transform?: string,
   index?: (x: number) => number,
+  symbol?: string,
   vEffect?: string,
 }> = (props) => {
   const scale = getScale();
@@ -118,7 +119,7 @@ export const Units: Component<{
   {(a, i) => <>
   <Line from={Complex(a, 13/scale())} to={Complex(a, -13/scale())} color="#E04C1F" width='3' vector-effect= {props.vEffect ?? "non-scaling-stroke"}  transform={props.transform ?? ""}/>
   <Text pos={Complex(a, -30/scale())} size={20} fill={"#59c729"} text-anchor='middle' transform={props.transform ?? ""} vector-effect= {props.vEffect ?? "non-scaling-stroke"}>
-    {"X".concat(props.index != null ? turnToSubscript(props.index(i()).toString()) : turnToSubscript(i().toString())) }</Text>
+    {(props.symbol ?? "X").concat(props.index != null ? turnToSubscript(props.index(i()).toString()) : turnToSubscript(i().toString())) }</Text>
   </>}
   </For>
 
@@ -151,6 +152,7 @@ export const Plot: Component<{
   min: Complex, max: Complex,
   func: (x: number) => number,
   xUnits?: number,
+  symbol?: string,
   resolution?: number,
   graphOpacity?: number,
   transform?: string,
@@ -161,7 +163,7 @@ export const Plot: Component<{
   const xs = linspace(p.min.re, p.max.re-0.5, p.resolution ?? 1000);
   return <>
     <Axes xlabel={p.xlabel} ylabel={p.ylabel} min={p.min} max={p.max} transform={p.transform ?? ""} vector-effect= {p.vEffect ?? "non-scaling-stroke"}/>
-    {p.xUnits != null ? <Units min={Complex(p.min.re, 0)} max={Complex(p.max.re, 0)} units={p.xUnits} vector-effect= {p.vEffect ?? "non-scaling-stroke"}></Units> : ""}
+    {p.xUnits != null ? <Units min={Complex(p.min.re, 0)} max={Complex(p.max.re, 0)} units={p.xUnits} vector-effect= {p.vEffect ?? "non-scaling-stroke"} symbol={p.symbol ?? "X"}></Units> : ""}
     <Polyline points={xs.map(x => Complex(x, p.func(x)))} opacity={p.graphOpacity ?? 1} transform={p.transform ?? ""} color={props.color} vector-effect= {p.vEffect ?? "non-scaling-stroke"}/>
   </>
 }

@@ -161,6 +161,16 @@ export const FftSlides = () => {
         ]}</Animations>
     </section>
 
+
+    <section>
+      <AsciiMath>hat(g)(f)</AsciiMath>
+      <Svg min={Complex(-1.6, -4.5)} max={Complex(18, 6)}>
+        <Plot xlabel="f" ylabel="Δ" min={Complex(0, -4.5)} max={Complex(Math.PI*5 + 0.5 , 6)} func={(x) => 3*cosWave(625)(x-Math.PI)} graphOpacity={0} xUnits={6} symbol='F'/>        
+        <Points min={Complex(0, -4.5)} max={Complex(Math.PI*5 + 0.5, 6)} func={(x) => 3*Math.abs(cosWave(625)(x-Math.PI))} resolution={6} pointOpacity={pointFreqOpacity()} labelSymbol='P'/>
+      </Svg>
+    </section>
+
+
     <section>
         <div>
             <AsciiMath>{equations[Eqidx()]}</AsciiMath>
