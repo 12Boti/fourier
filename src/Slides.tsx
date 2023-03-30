@@ -1,12 +1,8 @@
 import { Component, createSignal } from "solid-js";
-import { Svg, Arrow } from './Svg';
-import { Complex } from 'complex.js';
-import AsciiMath from './AsciiMath';
 import { createSequence } from './animation';
 import JpgSlides from "./JpgSlides";
 import { FourierSlides } from "./FourierSlides";
 import { FftSlides } from "./FftSlides";
-import { PlaySlides } from "./PlaySlides";
 
 function easeOutQuad(x: number): number {
   return 1 - (1 - x) * (1 - x);
@@ -24,7 +20,6 @@ const Slides: Component = () => {
   return <>
     <FftSlides />
     <FourierSlides />
-    <PlaySlides />
     <JpgSlides />
   </>;
 };
