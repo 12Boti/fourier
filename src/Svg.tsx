@@ -113,9 +113,9 @@ export const Units: Component<{
   vEffect?: string,
 }> = (props) => {
   const scale = getScale();
-  const units = linspace(props.min.re, props.max.re-0.5, props.units);
+  const units = () => linspace(props.min.re, props.max.re-0.5, props.units);
   return <>
-  <For each={units ?? []}>
+  <For each={units() ?? []}>
   {(a, i) => <>
   <Line from={Complex(a, 13/scale())} to={Complex(a, -13/scale())} color="#E04C1F" width='3' vector-effect= {props.vEffect ?? "non-scaling-stroke"}  transform={props.transform ?? ""}/>
   <Text pos={Complex(a, -30/scale())} size={20} fill={"#59c729"} text-anchor='middle' transform={props.transform ?? ""} vector-effect= {props.vEffect ?? "non-scaling-stroke"}>

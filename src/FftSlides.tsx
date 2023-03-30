@@ -7,6 +7,8 @@ import { createMemo, createSignal, For, Index, Show } from 'solid-js';
 import { css, oklch, mix } from '@thi.ng/color';
 import * as colors from './colors';
 
+//import seismograph from '../images/seismograph.png';
+
 
 export const FftSlides = () => {
   const [Eqidx, setEqidx] = createSignal(0);
@@ -43,10 +45,11 @@ export const FftSlides = () => {
     "e^(-i2pi f t) = cos(2pfx) - sin(2pfx)i",
   ];
 
-  const [theta, setTheta] = createTweenedNumber((1/8), {duration: 5000});
+  const [theta, setTheta] = createTweenedNumber((1/8), {ease: (t) => t, duration: 5000});
   const [arrowOpacity, setArrowOpacity] = createTweenedNumber(0, {duration: 1000});
   const [circleOpacity, setCircleOpacity] = createTweenedNumber(0, {duration: 1000});
   const [othePlotOpacity, setOthePlotOpacity] = createTweenedNumber(0, {duration: 1000});
+
 
   const [lowFreqOpacity, setLowFreqOpacity] = createTweenedNumber(0, {duration: 1000});
   const [highFreqOpacity, setHighFreqOpacity] = createTweenedNumber(0, {duration: 1000});
@@ -56,7 +59,7 @@ export const FftSlides = () => {
   const testFrequensies = [[0],[1,2,3], [0,1,2], [1,2,3,], [0,1], [1,2,3], [0,1,2], [1,2,3]];
   const [circlesOpacity, setCirclesOpacity] = createTweenedNumber(0, {duration: 1000});
 
-  const [translateX, setTranslateX] = createTweenedNumber(0, {ease: (t) => t ,duration: 1000});
+  const [translateX, setTranslateX] = createTweenedNumber(0, {duration: 1000});
 
   const [translateEvenX, setTranslateEvenX] = createTweenedNumber(9, {duration: 1000});
 
@@ -66,8 +69,13 @@ export const FftSlides = () => {
   const [translateMultiY1, setTranslateMultiY1] = createTweenedNumber(0, {duration: 1000});
   const [translateMultiY2, setTranslateMultiY2] = createTweenedNumber(0, {duration: 1000});
 
+  const [zoom, setZoom] = createTweenedNumber(1, {ease: (t) => t, duration: 7000});
+
   return <>
     <section><h1>FFT</h1></section>
+    <section>
+      <image href={pepeJpg} x="-1" y="-1" width="2" height="2" class="image-render-pixel" />
+    </section>
     <section>
       <AsciiMath>f(x)="bonyi függvény"</AsciiMath>
       <Svg min={Complex(-1.6, -4.5)} max={Complex(18, 6)}>        
@@ -137,7 +145,7 @@ export const FftSlides = () => {
 
     <section>
         <div>
-            <AsciiMath>{equations[Eqidx()]}</AsciiMath>
+            <AsciiMath class="text-4xl">{equations[Eqidx()]}</AsciiMath>
         </div>
         <Animations>{[
             () => {setEqidx(0);},
@@ -371,6 +379,26 @@ export const FftSlides = () => {
             () => {setTranslateMultiX(9); setTranslateMultiY1(0); setTranslateMultiY2(0);},
             () => {setTranslateMultiX(9); setTranslateMultiY1(3.5); setTranslateMultiY2(3.5);},
             () => {setTranslateMultiX(9); setTranslateMultiY1(3.5); setTranslateMultiY2(10.5);},
+          ]}</Animations>
+        </Svg>
+      </div>
+    </section>
+
+    <section>
+      <AsciiMath>O(n^2) "vs " O(nlog_2n)</AsciiMath>
+    </section>
+
+
+    <section>
+      <div class="w-full h-full">
+        <Svg min={Complex(-0.5, -0.5)} max={Complex(36, 24)}>
+          <Units min={Complex(0, -3)} max={Complex(34.5, 24)} units={5*zoom()} symbol=''/>
+          <Units min={Complex(0, -3)} max={Complex(23.5, 24)} units={5*zoom()*(23.5/34.5)} symbol='' transform='rotate(-90)' index={(x) => ""}/>
+          <Plot xlabel="" ylabel="" min={Complex(0, -3)} max={Complex(35, 24)} func={(x) => x*zoom()>=1 ? x*Math.log2(x*zoom())/50 : 0}/>
+          <Plot xlabel="" ylabel="" min={Complex(0, -3)} max={Complex(35, 24)} func={(x) => x*x*zoom()/50} />
+          <Animations>{[
+            () => {setZoom(1);},
+            () => {setZoom(20);},
           ]}</Animations>
         </Svg>
       </div>
