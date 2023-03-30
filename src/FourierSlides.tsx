@@ -7,6 +7,9 @@ import { Component, createMemo, createSignal, For, Index, Show } from 'solid-js'
 import { css, oklch, mix } from '@thi.ng/color';
 import createRAF from '@solid-primitives/raf';
 import { PlaySlides, userSumFunc } from './PlaySlides';
+import joke from '../audio/Fourier_joke.wav';
+import joke_noise from '../audio/Fourier_joke_noise.wav';
+import joke_spectrum from '../images/joke_spectrum.png';
 
 const func_resolution = 1024;
 
@@ -240,6 +243,15 @@ export const FourierSlides = () => {
     </section>
     <PlaySlides />
     <TransformSlide />
+    <section>
+      <audio controls src={joke_noise} />
+    </section>
+    <section>
+      <img src={joke_spectrum} />
+    </section>
+    <section>
+      <audio controls src={joke} />
+    </section>
     <ESlides />
     <IntegralSlides />
   </>;
