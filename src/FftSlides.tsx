@@ -60,6 +60,10 @@ export const FftSlides = () => {
   const [othePlotOpacity, setOthePlotOpacity] = createTweenedNumber(0, {duration: 1000});
 
 
+  const [triangleOpacity, setTriangleOpacity] = createTweenedNumber(0, {duration: 1000});
+  const [lengthOpacity, setLengthOpacity] = createTweenedNumber(0, {duration: 1000});
+  const [angleOpacity, setAngleOpacity] = createTweenedNumber(0, {duration: 1000});
+
   const [lowFreqOpacity, setLowFreqOpacity] = createTweenedNumber(0, {duration: 1000});
   const [highFreqOpacity, setHighFreqOpacity] = createTweenedNumber(0, {duration: 1000});
   const [pointFreqOpacity, setPointFreqOpacity] = createTweenedNumber(1, {duration: 800});
@@ -182,7 +186,6 @@ export const FftSlides = () => {
     </section>
 
     <section>
-      <AsciiMath>f(x)="bonyi függvény"</AsciiMath>
       <Svg min={Complex(-1.6, -4.5)} max={Complex(18, 6)}>
         <Plot xlabel="t" ylabel="Δ" min={Complex(0, -4.5)} max={Complex(Math.PI*5 + 0.5 /*We probaly need +0.5 because of the triangle*/, 6)} func={(x) => 3*wave(250)(x)} graphOpacity={lowFreqOpacity()}/>
         <Plot xlabel="t" ylabel="Δ" min={Complex(0, -4.5)} max={Complex(Math.PI*5 + 0.5, 6)} func={(x) => 3*wave(5*250)(x)} graphOpacity={highFreqOpacity()}/>
@@ -260,6 +263,62 @@ export const FftSlides = () => {
             () => {setTheta(1/8); setArrowOpacity(1); setCircleOpacity(1); setOthePlotOpacity(0)},
             () => {setTheta(1/8); setArrowOpacity(1); setCircleOpacity(1); setOthePlotOpacity(1)},
             () => {setTheta(3 + 1/8); setArrowOpacity(1); setCircleOpacity(1); setOthePlotOpacity(1)},
+      ]}</Animations>
+    </section>
+
+
+    <section>
+      <div class="w-full h-full">
+      <Svg min={Complex(-1.8, -1.2)} max={Complex(1.8, 1.2)} style="width: auto; height: 77%;">
+          <Axes xlabel='' ylabel='' min={Complex(-1.1, -1.2)} max={Complex(1.2, 1.2)}/>
+          <Line from={Complex(0,0)} to={Complex({arg: 2*Math.PI*(1/8), abs: 1})} opacity={1} color='yellow'/>
+          <Line from={Complex(0,0)} to={Complex(Math.cos(2*Math.PI*(1/8)), 0)} opacity={triangleOpacity()} color='purple'/>
+          <Line from={Complex(Math.cos(2*Math.PI*(1/8)),0)} to={Complex(Math.cos(2*Math.PI*(1/8)), Math.sin(2*Math.PI*(1/8)))} opacity={triangleOpacity()} color='blue'/>
+          <circle cx="0" cy="0" r="1" stroke-width={1} fill="none" stroke="#FFFFFF" vector-effect="non-scaling-stroke" opacity={1}/>
+          <path 
+          d={
+            ["M ", smallRadius, "0 A", smallRadius, smallRadius, "0", ((1/8)%1)<0.5 ? "0" : "1", "0", 
+            (smallRadius*Math.cos((1/8)*2*Math.PI)),
+            (-smallRadius*Math.sin((1/8)*2*Math.PI))].join(" ")
+          }
+          stroke="green" fill="none" vector-effect="non-scaling-stroke" opacity={1}/>
+          <Text 
+          pos={Complex(1.3*smallRadius*Math.cos(((1/8)%1)*2*Math.PI/2)/2,-0.8*smallRadius/5+smallRadius*Math.sin(((1/8)%1)*2*Math.PI/2)/2)}
+          size={50}
+          text-anchor="middle"
+          fill={"green"}
+          vector-effect="non-scaling-stroke"
+          opacity={1}
+          >θ</Text>
+          <Point pos={Complex({arg: 2*Math.PI/8, abs: 1})} color="red"/>
+          <Text
+            pos={Complex({arg: 2*Math.PI/8, abs: 1.05})}
+            size={55}
+            fill="red"
+          >(x; y)</Text>
+        </Svg>
+        <style>{`
+          .grid-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+          }
+
+          .grid-item {
+            padding: 0px;
+            text-align: center;
+          }`}
+        </style>
+        <div class="grid-container">
+          <AsciiMath class="grid-item" style={"opacity: "+lengthOpacity()+";"}>A=sqrt(x^2+y^2)</AsciiMath>
+          <AsciiMath class="grid-item" style={"opacity: "+angleOpacity()+";"}>theta=tg^(-1)(y/x)</AsciiMath>
+        </div>
+      </div>
+      <Animations>{[
+        () => {setTriangleOpacity(0); setAngleOpacity(0); setLengthOpacity(0);},
+        () => {setTriangleOpacity(1); setAngleOpacity(0); setLengthOpacity(0);},
+        () => {setTriangleOpacity(1); setAngleOpacity(0); setLengthOpacity(1);},
+        () => {setTriangleOpacity(1); setAngleOpacity(1); setLengthOpacity(1);},
       ]}</Animations>
     </section>
 
