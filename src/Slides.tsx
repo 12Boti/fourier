@@ -18,8 +18,8 @@ const Slides: Component = () => {
 
 
   return <>
-    <FftSlides />
     <FourierSlides />
+    <FftSlides />
     <JpgSlides />
   </>;
 };
