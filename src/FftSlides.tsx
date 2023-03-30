@@ -5,6 +5,7 @@ import { linspace } from './Editor';
 import { Animations, createSequence, createTweenedNumber } from './animation';
 import { createMemo, createSignal, For, Index, Show } from 'solid-js';
 import { css, oklch, mix } from '@thi.ng/color';
+import * as colors from './colors';
 
 
 export const FftSlides = () => {
@@ -42,6 +43,10 @@ export const FftSlides = () => {
     "e^(-i2pi f t) = cos(2pfx) - sin(2pfx)i",
   ];
 
+  const [theta, setTheta] = createTweenedNumber((1/8), {duration: 5000});
+  const [arrowOpacity, setArrowOpacity] = createTweenedNumber(0, {duration: 5000});
+  const [circleOpacity, setCircleOpacity] = createTweenedNumber(0, {duration: 5000});
+  const [othePlotOpacity, setOthePlotOpacity] = createTweenedNumber(0, {duration: 5000});
 
   const [lowFreqOpacity, setLowFreqOpacity] = createTweenedNumber(0, {duration: 1000});
   const [highFreqOpacity, setHighFreqOpacity] = createTweenedNumber(0, {duration: 1000});
@@ -51,7 +56,7 @@ export const FftSlides = () => {
   const testFrequensies = [[0],[1,2,3], [0,1,2], [1,2,3,], [0,1], [1,2,3], [0,1,2], [1,2,3]];
   const [circlesOpacity, setCirclesOpacity] = createTweenedNumber(0, {duration: 1000});
 
-  const [translateX, setTranslateX] = createTweenedNumber(0, {duration: 1000});
+  const [translateX, setTranslateX] = createTweenedNumber(0, {ease: (t) => t ,duration: 1000});
 
   const [translateEvenX, setTranslateEvenX] = createTweenedNumber(9, {duration: 1000});
 
@@ -118,7 +123,7 @@ export const FftSlides = () => {
           >(x; y)</Text>
         </Svg>
       </div>
-      <div>
+      <div class="w-full">
         <AsciiMath>{coordinateCalcs[corEqidx()]}</AsciiMath>
       </div>
       <Animations>{[
@@ -165,6 +170,55 @@ export const FftSlides = () => {
             () => {setEqidx(3);},
         ]}</Animations>
     </section>
+
+
+    <section>
+      <div class="w-full h-full">
+      <Svg min={Complex(-1.2, -1.2)} max={Complex(3.8, 1.2)} class="w-full h-full">
+          <g transform="scale(0.5, 0.5) translate(-1.3,-0.3)">
+            <Axes xlabel='' ylabel='' min={Complex(-1.1, -1.5)} max={Complex(1.2, 1.5)}/>
+            <Arrow from={Complex(0,0)} to={Complex({arg: 2*Math.PI*theta(), abs: 1})} opacity={arrowOpacity()}/>
+            <circle cx="0" cy="0" r="1" stroke-width={1} fill="none" stroke="#FFFFFF" vector-effect="non-scaling-stroke" opacity={circleOpacity()}/>
+            <path 
+            d={
+              ["M ", smallRadius, "0 A", smallRadius, smallRadius, "0", (theta()%1)<0.5 ? "0" : "1", "0", 
+              (smallRadius*Math.cos(theta()*2*Math.PI)),
+              (-smallRadius*Math.sin(theta()*2*Math.PI))].join(" ")
+            }
+            stroke="green" fill="none" vector-effect="non-scaling-stroke" opacity={circleOpacity()}/>
+            <Text 
+            pos={Complex(smallRadius*Math.cos((theta()%1)*2*Math.PI/2)/2,-smallRadius/5+smallRadius*Math.sin((theta()%1)*2*Math.PI/2)/2)}
+            size={50}
+            text-anchor="middle"
+            fill={"green"}
+            vector-effect="non-scaling-stroke"
+            opacity={circleOpacity()}
+            >θ</Text>
+            <Point pos={Complex({arg: 2*Math.PI/8, abs: 1})} color="red"/>
+            <Text
+              pos={Complex({arg: 2*Math.PI/8, abs: 1.05})}
+              size={55}
+              fill="red"
+            >(x; y)</Text>
+          </g>
+          <g transform="scale(0.5, 0.5) translate(0.5,-0.3)">
+            <Axes xlabel="t" ylabel="Δ" min={Complex(0, -1.5)} max={Complex(Math.PI*2 + 0.5, 1.5)} opacity={othePlotOpacity()}/>
+            <Polyline points={linspace(0, Math.PI*2*((theta()-1/8)/(3)) + 0.5-0.5, 1000).map(x => Complex(x, 1*wave(250)(3*x+(1/8)*2*Math.PI)))} opacity={1} color={colors.stroke} opacity={othePlotOpacity()}/>
+            <Line from={Complex(Math.cos(theta()*2*Math.PI)*1-1.8, Math.sin(theta()*2*Math.PI)*1)} to={Complex(Math.PI*2*((theta()-1/8)/(3)), Math.sin(theta()*2*Math.PI)*1)} color={"cyan"} opacity={0.5*othePlotOpacity()}/>
+            
+          </g>
+        </Svg>
+      </div>
+      <Animations>{[
+            () => {setTheta(1/8); setArrowOpacity(0); setCircleOpacity(0); setOthePlotOpacity(0)},
+            () => {setTheta(1/8); setArrowOpacity(1); setCircleOpacity(0); setOthePlotOpacity(0)},
+            () => {setTheta(1/8); setArrowOpacity(1); setCircleOpacity(1); setOthePlotOpacity(0)},
+            () => {setTheta(1/8); setArrowOpacity(1); setCircleOpacity(1); setOthePlotOpacity(1)},
+            () => {setTheta(3 + 1/8); setArrowOpacity(1); setCircleOpacity(1); setOthePlotOpacity(1)},
+      ]}</Animations>
+    </section>
+
+
 
     <section>
     <Svg min={Complex(-1.6, -4.5)} max={Complex(18, 6)}>
@@ -219,8 +273,6 @@ export const FftSlides = () => {
       ]}</Animations>
     </Svg>
     </section>
-
-
 
 
     <section>
