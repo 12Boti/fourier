@@ -13,7 +13,7 @@ import hydrophone from '../images/hydrophone.png';
 import instrument from '../images/seismographInstrument.png';
 import NumberOfEarthquakes from '../images/Number-of-earthquakes-per-year-worldwide-source-IRIS.png';
 import seismograph from '../images/seismograph.png';
-import explosionVsearthquake from '../images/explosionVsearthquake.png';
+import explosionVsearthquake from '../images/explosionVSearthquake.png';
 import Tukey from '../images/John_Tukey.png';
 import Cooley from '../images/James_Cooley.png';
 import Gauss from '../images/Carl_Friedrich_Gauss.png';
@@ -49,8 +49,8 @@ export const FftSlides = () => {
   const [corEqidx, setCorEqidx] = createSignal(0);
   const coordinateCalcs = [
     "",
-    "(x;y) = (cos(-2pfx); sin(-2pfx))",
-    "(x;y) = (cos(2pfx); -sin(2pfx))",
+    "(x;y) = (cos(-2pifx); sin(-2pifx))",
+    "(x;y) = (cos(2pifx); -sin(2pifx))",
     "e^(-i2pi f t) = cos(2pfx) - sin(2pfx)i",
   ];
 
@@ -85,7 +85,7 @@ export const FftSlides = () => {
   const [zoom, setZoom] = createTweenedNumber(1, {ease: (t) => t, duration: 7000});
 
   return <>
-    <section><h1>FFT</h1></section>
+    <section><h1>Fast Fourier Transfrom (FFT)</h1></section>
     <section>
       <img src={ABomb}/>
     </section>
@@ -119,7 +119,7 @@ export const FftSlides = () => {
             () => {setGraphOpacity(0); setPointOpacity(1);},
         ]}</Animations>
     </section>
-    <section><h1>DFT</h1></section>
+    <section><h1>Discrete Fourier Transfrom (DFT)</h1></section>
     <section>
         <div>
             <AsciiMath>{equations[Eqidx()]}</AsciiMath>
@@ -133,7 +133,7 @@ export const FftSlides = () => {
       <div class="flex items-center justify-center">
         <div style={{ display: "block"}}> 
           <AsciiMath>{`e^(-i2pi*${x().toFixed(2)})`}</AsciiMath> 
-          <AsciiMath>{`theta=-i2p${x().toFixed(2)}=${(-2*Math.PI*x()).toFixed(2)}`}</AsciiMath>
+          <AsciiMath>{`theta=-2pi*${x().toFixed(2)}=${(-2*Math.PI*x()).toFixed(2)}`}</AsciiMath>
         </div>
         <Svg min={Complex(-1.2, -1.2)} max={Complex(1.2, 1.2)} class="w-60%">
           <Axes xlabel='' ylabel='' min={Complex(-1.1, -1.1)} max={Complex(1.2, 1.2)}/>
