@@ -1,11 +1,15 @@
 import AsciiMath from './AsciiMath';
-import { Arrow, Axes, Line, PlotSvg, Point, Polyline, Svg, Text } from './Svg';
+import { Arrow, Axes, Line, PlotSvg, Point, Points, Polyline, Svg, Text } from './Svg';
 import { Complex } from 'complex.js';
 import { linspace } from './Editor';
 import { Animations, createTweenedNumber } from './animation';
-import { createMemo, createSignal, For, Index, Show } from 'solid-js';
+import { Component, createMemo, createSignal, For, Index, Show } from 'solid-js';
 import { css, oklch, mix } from '@thi.ng/color';
 import createRAF from '@solid-primitives/raf';
+import { PlaySlides, userSumFunc } from './PlaySlides';
+import joke from '../audio/Fourier_joke.wav';
+import joke_noise from '../audio/Fourier_joke_noise.wav';
+import joke_spectrum from '../images/joke_spectrum.png';
 
 const func_resolution = 1024;
 
@@ -52,6 +56,11 @@ function playFreqs(...freqs: number[]): void {
   gain.gain.linearRampToValueAtTime(0, time + 3);
 }
 
+const GradientPolyline: Component<{points: Complex[]}> = (p) =>
+  <Index each={[...p.points.keys()].slice(1)}>{i =>
+    <Line from={p.points[i()-1]} to={p.points[i()]} stroke={twistGradient[p.points.length-i()]} stroke-linecap="round" />
+  }</Index>
+
 const TransformSlide = () => {
   const [func, setFunc] = createSignal((x: number) => Math.sin(x*2*Math.PI*3));
   const func_values = createMemo(() => linspace(-0.5, 2, func_resolution).map(x => Complex(x, func()(x))));
@@ -84,9 +93,7 @@ const TransformSlide = () => {
       </div>
       <Svg min={Complex(-1.5, -1.5)} max={Complex(1.5, 1.5)} class="h-xs">
           <Show when={constLength() === false}>
-            <Index each={[...twisted_values().keys()].slice(1)}>{i =>
-              <Line from={twisted_values()[i()-1]} to={twisted_values()[i()]} stroke={twistGradient[twisted_values().length-i()]} stroke-linecap="round" />
-            }</Index>
+            <GradientPolyline points={twisted_values()} />
           </Show>
           <Show when={showAvg() === true}>
             <Point pos={Complex.ZERO} color="#880000" />
@@ -123,6 +130,8 @@ const TransformSlide = () => {
     () => {setFunc(() => (x) => manysin(x*15)/3.1); setTime(0); setTime(0); setSpinFreq(1); setSpinFreq(1); setShowFreqs(false); setShowAvg(false);},
     () => {setTime(2);},
     () => {setShowAvg(true); setShowFreqs(true); setSpinFreq(0.1); setSpinFreq(10);},
+    () => {setSpinFreq(0.1); setSpinFreq(0.1); setFunc(() => userSumFunc ? ((x) => userSumFunc(x*3)) : ((x) => 0))},
+    () => {setSpinFreq(10);},
   ]}</Animations>
   </section>;
 };
@@ -154,6 +163,29 @@ const ESlides = () => {
       ]}</Animations>
     </section>
   </>;
+}
+
+const IntegralSlides = () => {
+  const [resolution, setResolution] = createSignal(10);
+
+  const func = manysin;
+  const twisted_func = (x: number) => Complex({abs: func(x*1.1)/3, arg: -2*Math.PI*2*x})
+
+  return <>
+    <section>
+      <Svg min={Complex(-1.5, -1.5)} max={Complex(1.5, 1.5)} class="h-xs">
+        <GradientPolyline points={linspace(0, 1, 1000).map(twisted_func)} />
+        <For each={linspace(0, 1, resolution())}>{x =>
+          <Point pos={twisted_func(x)} color="#e55443" />
+        }</For>
+      </Svg>
+      <Animations>{[
+        () => setResolution(10),
+        () => setResolution(20),
+        () => setResolution(50),
+      ]}</Animations>
+    </section>
+  </>
 }
 
 export const FourierSlides = () => {
@@ -209,7 +241,18 @@ export const FourierSlides = () => {
       <AsciiMath>f(x)="másik bonyi függvény"</AsciiMath>
       <PlotSvg xlabel="t" ylabel="Δ" min={Complex(-1.5, -4.5)} max={Complex(17, 6)} func={manysin2} />
     </section>
+    <PlaySlides />
     <TransformSlide />
+    <section>
+      <audio controls src={joke_noise} />
+    </section>
+    <section>
+      <img src={joke_spectrum} />
+    </section>
+    <section>
+      <audio controls src={joke} />
+    </section>
     <ESlides />
+    <IntegralSlides />
   </>;
 }
