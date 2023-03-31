@@ -1,6 +1,7 @@
 import { Svg } from "./Svg";
 import pepeJpg from "../images/pepe.jpg";
 import textPng from "../images/text.png";
+import textJpg from "../images/text.jpg";
 import lettersPng from "../images/letters.png";
 import duck1 from "../images/duck1.jpg";
 import { Complex } from 'complex.js';
@@ -8,6 +9,7 @@ import { createTweenedNumber, createTweenedComplex, TweenOpts, Animations } from
 import { Component, createEffect, createMemo, createResource, createSignal, For, JSX, onMount, Show, splitProps } from "solid-js";
 import { linspace } from "./Editor";
 import createTween from "@solid-primitives/tween";
+import AsciiMath from "./AsciiMath";
 
 const duck = await loadRgba(duck1);
 const text = await loadRgba(textPng);
@@ -465,6 +467,12 @@ const JpgSlides: Component = () => <>
     <Freqs />
     <Freqs2 />
     <Freqs2d />
+    <section>
+        <img src={textJpg} class="w-full image-render-pixel" />
+    </section>
+    <section>
+      <AsciiMath>hat(g)(f) = int_-oo^oo g(t)e^(-i2pi f t)dt</AsciiMath>
+    </section>
 </>;
 
 export default JpgSlides;
