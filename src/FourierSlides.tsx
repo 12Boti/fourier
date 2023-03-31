@@ -140,24 +140,27 @@ const ESlides = () => {
   const [f, setF] = createTweenedNumber(1, {duration: 10000, ease: x => x});
   const [arg, setArg] = createSignal(0);
   let prevTimestamp = performance.now();
+  const [t, setT] = createSignal(0);
+
   const [running, start, stop] = createRAF(timestamp => {
     const dt = (timestamp - prevTimestamp)/1000;
+    setT(t => t + dt);
     prevTimestamp = timestamp;
     setArg(arg => arg+f()*dt);
   });
-  start();
 
   return <>
     <section>
       <div class="flex flex-row justify-evenly w-full">
         <AsciiMath>{`e^(-i2pi*f*t)`}</AsciiMath>
         <AsciiMath>{`f = ${f().toFixed(1)}`}</AsciiMath>
+        <AsciiMath>{`t = ${t().toFixed(1)}`}</AsciiMath>
       </div>
       <Svg min={Complex(-1.2, -1.2)} max={Complex(1.2, 1.2)} class="h-xl">
         <Arrow from={Complex(0,0)} to={Complex({arg: -2*Math.PI*arg(), abs: 1})} color="#00b9e4" />
       </Svg>
       <Animations>{[
-        () => {setArg(0);},
+        () => {setF(1); setArg(0); setT(0); start();},
         () => {setF(0);},
         () => {setF(3);},
       ]}</Animations>
