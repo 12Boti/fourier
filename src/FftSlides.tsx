@@ -94,7 +94,6 @@ export const FftSlides = () => {
   const dft_xs = normalizedReal(dftReal(xs));
   const dft_xs_polar = dft_xs.slice(0,dft_xs.length/2).map((z, freq) => ({z, freq}))
     .sort((a, b) => Math.round((b.z.abs() - a.z.abs())*10) || (a.freq - b.freq)).filter((z)=> z.z.abs() > 0.001);
-  console.log(dft_xs_polar);
   const offsets = () => dft_xs_polar.map(({z, freq}) => Complex({abs: z.abs(), arg: freq*time()*2*Math.PI + z.arg()}));
   const positions = () => {
     const o = offsets();
@@ -203,6 +202,22 @@ export const FftSlides = () => {
         <Animations>{[
             () => {setEqidx(0);},
             () => {setEqidx(1);},
+            () => {setEqidx(2);},
+        ]}</Animations>
+    </section>
+
+    <section>
+      <Svg min={Complex(-0.5, -2)} max={Complex(2*Math.PI+1, 2)} class="w-full h-full">
+        <Plot xlabel="" ylabel="Δ" min={Complex(0, -1.5)} max={Complex(Math.PI*2+0.5, 2)} func={(x) => wave(250)(x)} xUnits={5}/>
+        <Points min={Complex(0, -4.5)} max={Complex(Math.PI*(3/2)+0.5, 6)} func={(x) => wave(250)(x)} resolution={4} pointOpacity={pointFreqOpacity()} labelSymbol='P'/>
+      </Svg>
+    </section>
+
+    <section>
+        <div>
+            <AsciiMath class="text-3xl">{equations[Eqidx()]}</AsciiMath>
+        </div>
+        <Animations>{[
             () => {setEqidx(2);},
         ]}</Animations>
     </section>
