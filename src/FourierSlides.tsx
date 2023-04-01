@@ -176,6 +176,7 @@ const IntegralSlides = () => {
 
   return <>
     <section>
+      <AsciiMath>int"..."dt</AsciiMath>
       <Svg min={Complex(-1.5, -1.5)} max={Complex(1.5, 1.5)} class="h-xs">
         <GradientPolyline points={linspace(0, 1, 1000).map(twisted_func)} />
         <For each={linspace(0, 1, resolution())}>{x =>
@@ -194,7 +195,7 @@ const IntegralSlides = () => {
 export const FourierSlides = () => {
 
   return <>
-    <section><h1>Hogyan turmixoljunk visszafele egy smoothiet?</h1>
+    <section><h1>Hogyan turmixoljunk visszafelé egy smoothiet?</h1>
     </section>
     <section><h1>Fourier-transzformáció</h1></section>
     <section>
@@ -255,6 +256,10 @@ export const FourierSlides = () => {
     <section>
       <audio controls src={joke} />
     </section>
+    <section>
+    <AsciiMath>hat(g)(f) = int_-oo^oo g(t)e^(-i2pi f t)dt</AsciiMath>
+    </section>
+  
     <ESlides />
     <IntegralSlides />
   </>;

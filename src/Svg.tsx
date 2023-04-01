@@ -66,7 +66,7 @@ export const Polyline: Component<{points: Complex[], opacity?: number, color?: s
 
 export const Arrow: Component<{
   from: Complex, to: Complex, 
-  color: string, 
+  color?: string, 
   headwidth?: number, headlength?: number,
   transform?: string,
   opacity?: number,

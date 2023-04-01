@@ -12,8 +12,25 @@ export function dft(signal: Complex[]): Complex[] {
   );
 }
 
+export function dftReal(signal: Complex[]): Complex[] {
+  const N = signal.length;
+  return Array.from(
+    Array(N),
+    (_, k) =>
+      signal.reduce(
+        (acc, x, n) => 
+        acc.add(Complex(0, x.im).mul({abs: 1, arg: -2 * Math.PI * k * n / (N)})),
+        Complex.ZERO,
+      )
+  );
+}
+
 export function normalized(signal: Complex[]): Complex[] {
   return signal.map(z => z.div(signal.length));
+}
+
+export function normalizedReal(signal: Complex[]): Complex[] {
+  return signal.map(z => z.div(signal.length/2).round(2));
 }
 
 function ceilPowerOfTwo(n: number): number {
@@ -49,7 +66,7 @@ export function fft(signal: Complex[]): Complex[] {
     const t = Complex({abs: 1, arg:-2 * Math.PI * k / n}).mul(yo[k]);
     output[k] = ye[k].add(t);
     output[k + n / 2] = ye[k].sub(t);
-  } 
+  }
   return output;
 
 }

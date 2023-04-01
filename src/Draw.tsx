@@ -16,7 +16,7 @@ import { createRAF } from '@solid-primitives/raf';
 import createTween from '@solid-primitives/tween';
 import { createTweenedComplex, createTweenedNumber } from './animation';
 
-function zip<A, B>(a: A[], b: B[]): [A, B][] {
+export function zip<A, B>(a: A[], b: B[]): [A, B][] {
   return a.map((k, i) => [k, b[i]]);
 }
 

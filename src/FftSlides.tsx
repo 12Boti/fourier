@@ -17,6 +17,8 @@ import explosionVsearthquake from '../images/explosionVSearthquake.png';
 import Tukey from '../images/John_Tukey.png';
 import Cooley from '../images/James_Cooley.png';
 import Gauss from '../images/Carl_Friedrich_Gauss.png';
+import { dft, dftReal, normalized, normalizedReal } from './fourier';
+import {zip} from './Draw';
 
 
 export const FftSlides = () => {
@@ -24,8 +26,8 @@ export const FftSlides = () => {
   const equations = [
     "hat(g)(f) = int_-oo^oo g(t)e^(-i2pi f t)dt", 
     "hat(g)(f) = int_-oo^oo g(t)(cos(2pift) -sin(2pift)i) dt",
-    "hat(g)(f) = sum_(k=0)^(K-1) x_k(cos(2pifk) -sin(2pifk)i) dt",
-    "F_n = sum_(k=0)^(K-1) x_k(cos(2pink) -sin(2pink)i) dt",
+    "hat(g)(f) = sum_(k=0)^(N-1) P_k(cos(2pif {:k/N:}) -sin(2pif {:k/N:})i)",
+    "F_n = sum_(k=0)^(N-1) P_k(cos(2pin (k)/N) -sin(2pin  k/N)i)",
   ];
 
   //bonyi function
@@ -83,6 +85,26 @@ export const FftSlides = () => {
   const [translateMultiY2, setTranslateMultiY2] = createTweenedNumber(0, {duration: 1000});
 
   const [zoom, setZoom] = createTweenedNumber(1, {ease: (t) => t, duration: 7000});
+
+  const [vectorOpacity, setVectorOpacity] = createTweenedNumber(0, {duration: 800});
+  const [functionOpacity, setFunctionOpacity] = createTweenedNumber(0, {duration: 800});
+  const [time, setTime] = createTweenedNumber(1, {ease: (t) => t, duration: 7000});
+  const fouriSin = sum((x) => 2*wave(250)(x+Math.PI/4), (x) => 2*wave(250*3)(x), (x) => 1*wave(250*5)(x-Math.PI/3));
+  const xs = linspace(0, Math.PI*2,13).map((x) => Complex(x, fouriSin(x))).slice(0,-1);
+  const dft_xs = normalizedReal(dftReal(xs));
+  const dft_xs_polar = dft_xs.slice(0,dft_xs.length/2).map((z, freq) => ({z, freq}))
+    .sort((a, b) => Math.round((b.z.abs() - a.z.abs())*10) || (a.freq - b.freq)).filter((z)=> z.z.abs() > 0.001);
+  console.log(dft_xs_polar);
+  const offsets = () => dft_xs_polar.map(({z, freq}) => Complex({abs: z.abs(), arg: freq*time()*2*Math.PI + z.arg()}));
+  const positions = () => {
+    const o = offsets();
+    const a = Array(o.length+1);
+    a[0] = Complex.ZERO;
+    for (let i = 1; i < o.length+1; i++) {
+        a[i] = a[i-1].add(o[i-1]);
+    }
+    return a;
+  };
 
   return <>
     <section><h1>Fast Fourier Transfrom (FFT)</h1></section>
@@ -176,7 +198,7 @@ export const FftSlides = () => {
 
     <section>
         <div>
-            <AsciiMath class="text-4xl">{equations[Eqidx()]}</AsciiMath>
+            <AsciiMath class="text-3xl">{equations[Eqidx()]}</AsciiMath>
         </div>
         <Animations>{[
             () => {setEqidx(0);},
@@ -211,7 +233,7 @@ export const FftSlides = () => {
 
     <section>
         <div>
-            <AsciiMath>{equations[Eqidx()]}</AsciiMath>
+            <AsciiMath class="text-3xl">{equations[Eqidx()]}</AsciiMath>
         </div>
         <Animations>{[
             () => {setEqidx(2);},
@@ -495,6 +517,81 @@ export const FftSlides = () => {
 
     <section>
       <img src={Gauss}/>
+    </section>
+
+    <section>
+    <style>{`
+          .grid-container-1 {
+            display: grid;
+            grid-template-columns: 70% 30%;
+            
+            gap: 0px;
+            padding: 0px;
+          }
+          .small-ascii-math .katex-display {
+            margin: 0;
+          }
+          
+          .grid-container-2 {
+            display: grid;
+            grid-template-rows: repeat(6, 1fr);
+            
+            gap: 0px;
+            padding: 0px;
+          }
+
+          .grid-item {
+            text-align: left;
+            padding: 0px;
+            text-align: center;
+            margin: 0px;
+          }`
+          }
+      </style>
+      <div class="grid-container-1 w-full">          
+      <Svg min={Complex(-1.6, -6.5)} max={Complex(9, 7)} class="grid-item">        
+        <Plot xlabel="t" ylabel="Δ" min={Complex(0, -5)} max={Complex(Math.PI*2, 5)} func={fouriSin} graphOpacity={1} xUnits={7}/>
+        <Points min={Complex(0, -4.5)} max={Complex(Math.PI*2, 6)} func={fouriSin} resolution={7} pointOpacity={1} labelSymbol='P'/>
+      </Svg>
+      <div class="grid-container-2">
+      <AsciiMath style="height: auto; width: 70%;" class="grid-item small-ascii-math text-3xl">{"f_0 = ("+ dft_xs[0].re.toFixed(2).toString() + ";" + dft_xs[0].im.toFixed(2).toString() +")"}</AsciiMath>
+      <AsciiMath style="height: auto; width: 70%;" class="grid-item small-ascii-math text-3xl">{"f_1 = ("+ dft_xs[1].re.toFixed(2).toString() + ";" + dft_xs[1].im.toFixed(2).toString() +")"}</AsciiMath>
+      <AsciiMath style="height: auto; width: 70%;" class="grid-item small-ascii-math text-3xl">{"f_2 = ("+ dft_xs[2].re.toFixed(2).toString() + ";" + dft_xs[2].im.toFixed(2).toString() +")"}</AsciiMath>
+      <AsciiMath style="height: auto; width: 70%;" class="grid-item small-ascii-math text-3xl">{"f_3 = ("+ dft_xs[3].re.toFixed(2).toString() + ";" + dft_xs[3].im.toFixed(2).toString() +")"}</AsciiMath>
+      <AsciiMath style="height: auto; width: 70%;" class="grid-item small-ascii-math text-3xl">{"f_4 = ("+ dft_xs[4].re.toFixed(2).toString() + ";" + dft_xs[4].im.toFixed(2).toString() +")"}</AsciiMath>
+      <AsciiMath style="height: auto; width: 70%;" class="grid-item small-ascii-math text-3xl">{"f_5 = ("+ dft_xs[5].re.toFixed(2).toString() + ";" + dft_xs[5].im.toFixed(2).toString() +")"}</AsciiMath>
+      </div>
+      </div>
+    </section>
+
+
+
+    <section>
+    <div class="w-full h-full">
+      <Svg min={Complex(-2.7, -2.2)} max={Complex(5.3, 2.2)} class="w-full h-full">
+          <g transform="scale(0.5, 0.5) translate(-1.3,-0.3)">
+            <Axes xlabel='' ylabel='' min={Complex(-2.5, -2.5)} max={Complex(2.5, 2.5)}/>
+            <For each={zip(offsets(), positions())}>
+            {([z, p]) => <>
+              <circle cx={p.re} cy={-p.im} r={z.abs()} fill="none" stroke="#FFA5FA77" stroke-width="1" vector-effect="non-scaling-stroke" opacity={functionOpacity()}></circle>
+              <Arrow from={p} to={p.add(z)} opacity={vectorOpacity()}/>
+            </>}
+            </For>            
+          </g>
+          <g transform="scale(0.5, 0.5) translate(3.5,-0.3)">
+            <Axes xlabel="t" ylabel="Δ" min={Complex(0, -2.5)} max={Complex(Math.PI*2 + 0.5, 2.5)} opacity={functionOpacity()}/>
+            <Polyline points={linspace(0, Math.PI*2*(time()), 1000).map(x => Complex(x, fouriSin(x)))} opacity={functionOpacity()} color={colors.stroke}/>
+            <Line from={positions()[positions().length-1].sub(Complex(4.8, 0))} to={Complex(Math.PI*2*time(), fouriSin(time()*2*Math.PI)*1)} color={"cyan"} opacity={0.5*functionOpacity()}/>
+            
+          </g>
+        </Svg>
+      </div>
+      <Animations>{[
+        () => {setTime(0); setVectorOpacity(0); setFunctionOpacity(0);},
+        () => {setTime(0); setVectorOpacity(1); setFunctionOpacity(0);},
+        () => {setTime(0); setVectorOpacity(1); setFunctionOpacity(1);},
+        () => {setTime(1); setVectorOpacity(1); setFunctionOpacity(1);},
+      ]}</Animations>
     </section>
   </>;
 }
