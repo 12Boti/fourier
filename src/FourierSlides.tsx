@@ -228,14 +228,14 @@ export const FourierSlides = () => {
       <div class="w-xl mx-auto">
         <PlotSvg xlabel="t" ylabel="Δ" min={Complex(-1.5, -2)} max={Complex(14, 2)} func={Asin} />
       </div>
-    </section>
-    <section>
-      <AsciiMath>f(x)=sinAx+sinEx</AsciiMath>
-      <PlotSvg xlabel="t" ylabel="Δ" min={Complex(-1.5, -2)} max={Complex(14, 5)} func={EAsin} />
       <Animations>{[
         () => {},
         () => playFreqs(440, 329.63),
       ]}</Animations>
+    </section>
+    <section>
+      <AsciiMath>f(x)=sinAx+sinEx</AsciiMath>
+      <PlotSvg xlabel="t" ylabel="Δ" min={Complex(-1.5, -2)} max={Complex(14, 5)} func={EAsin} />
     </section>
     <section>
       <AsciiMath>f(x)="bonyi függvény"</AsciiMath>
