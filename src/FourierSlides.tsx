@@ -33,7 +33,7 @@ const audioCtx = new AudioContext();
 const gain = audioCtx.createGain();
 const gain2 = audioCtx.createGain();
 gain.connect(gain2).connect(audioCtx.destination);
-gain2.gain.setValueAtTime(0.3, audioCtx.currentTime);
+gain2.gain.setValueAtTime(0.05, audioCtx.currentTime);
 let activeOscillators: OscillatorNode[] = [];
 
 function playFreqs(...freqs: number[]): void {
