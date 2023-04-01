@@ -51,6 +51,7 @@ const Editor: Component = () => {
   
   return (
     <div class="text-light-500">
+      <a class="absolute block bg-sky-600 text-dark-800 p-5 rounded-xl font-bold" onclick={() => {location.href = "#draw"; location.reload()}}>Rajz</a>
       <img src={avatar} class="w-20 h-20 mx-auto mb-10 pt-2 block"></img>
       <Svg min={Complex(-3, -2.1)} max={Complex(3, 2.1)}>
         <For each={linspace(-2, 2, 5)}>{x => <>
