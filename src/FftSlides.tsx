@@ -166,12 +166,12 @@ export const FftSlides = () => {
             (smallRadius*Math.cos(x()*2*Math.PI)),
             (smallRadius*Math.sin(x()*2*Math.PI))].join(" ")
           }
-          stroke="green" fill="none" vector-effect="non-scaling-stroke" />
+          stroke="#11da22" fill="none" vector-effect="non-scaling-stroke" />
           <Text 
           pos={Complex(smallRadius*Math.cos(x()*2*Math.PI/2)/2,-smallRadius/5-smallRadius*Math.sin(x()*2*Math.PI/2)/2)}
           size={50}
           text-anchor="middle"
-          fill={"green"}
+          fill={"#11da22"}
           vector-effect="non-scaling-stroke"
           >θ</Text>
           <Point pos={Complex({arg: -2*Math.PI*x(), abs: 1})} color="red"/>
@@ -270,12 +270,12 @@ export const FftSlides = () => {
               (smallRadius*Math.cos(theta()*2*Math.PI)),
               (-smallRadius*Math.sin(theta()*2*Math.PI))].join(" ")
             }
-            stroke="green" fill="none" vector-effect="non-scaling-stroke" opacity={circleOpacity()}/>
+            stroke="#11da22" fill="none" vector-effect="non-scaling-stroke" opacity={circleOpacity()}/>
             <Text 
             pos={Complex(smallRadius*Math.cos((theta()%1)*2*Math.PI/2)/2,-smallRadius/5+smallRadius*Math.sin((theta()%1)*2*Math.PI/2)/2)}
             size={50}
             text-anchor="middle"
-            fill={"green"}
+            fill="#11da22"
             vector-effect="non-scaling-stroke"
             opacity={circleOpacity()}
             >θ</Text>
@@ -318,12 +318,12 @@ export const FftSlides = () => {
             (smallRadius*Math.cos((1/8)*2*Math.PI)),
             (-smallRadius*Math.sin((1/8)*2*Math.PI))].join(" ")
           }
-          stroke="green" fill="none" vector-effect="non-scaling-stroke" opacity={1}/>
+          stroke="#11da22" fill="none" vector-effect="non-scaling-stroke" opacity={1}/>
           <Text 
           pos={Complex(1.3*smallRadius*Math.cos(((1/8)%1)*2*Math.PI/2)/2,-0.8*smallRadius/5+smallRadius*Math.sin(((1/8)%1)*2*Math.PI/2)/2)}
           size={50}
           text-anchor="middle"
-          fill={"green"}
+          fill={"#11da22"}
           vector-effect="non-scaling-stroke"
           opacity={1}
           >θ</Text>

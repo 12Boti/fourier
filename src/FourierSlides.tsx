@@ -248,13 +248,21 @@ export const FourierSlides = () => {
     <PlaySlides />
     <TransformSlide />
     <section>
-      <audio controls src={joke_noise} />
+      <audio id="myAudio" controls src={joke_noise} />
+      <Animations>{[
+        () => {},
+        () => document.getElementById("myAudio").play(),
+      ]}</Animations>
     </section>
     <section>
       <img src={joke_spectrum} />
     </section>
     <section>
-      <audio controls src={joke} />
+      <audio id="myAudio2" controls src={joke} />
+      <Animations>{[
+        () => {},
+        () => document.getElementById("myAudio2").play(),
+      ]}</Animations>
     </section>
     <section>
     <AsciiMath>hat(g)(f) = int_-oo^oo g(t)e^(-i2pi f t)dt</AsciiMath>

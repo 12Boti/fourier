@@ -18,6 +18,7 @@ const Slides: Component = () => {
 
 
   return <>
+    <section />
     <FourierSlides />
     <FftSlides />
     <JpgSlides />

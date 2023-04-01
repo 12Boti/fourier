@@ -129,7 +129,7 @@ const Draw: Component = () => {
           <circle cx={p.re} cy={-p.im} r={z.abs()} fill="none" stroke="#FFA5FA77" stroke-width="1" vector-effect="non-scaling-stroke"></circle>
         </>}
       </For>
-      <Polyline points={drawing()} stroke-width="1" vector-effect="non-scaling-stroke" />
+      <Polyline points={drawing()} stroke-width="5" vector-effect="non-scaling-stroke" />
       <Polyline points={positions()} stroke-width="1" vector-effect="non-scaling-stroke" stroke="#FCFC05" />
     </Svg>
   );
