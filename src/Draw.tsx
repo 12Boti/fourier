@@ -7,7 +7,7 @@
 
 
 
-import { Component, createSignal, For, createMemo, createEffect, on, startTransition, useTransition } from 'solid-js';
+import { Component, createSignal, For, createMemo, createEffect, on, startTransition, useTransition, onMount } from 'solid-js';
 import {Complex} from 'complex.js';
 import { normalized, fft } from './fourier';
 import { Polyline, Svg } from './Svg';
@@ -75,12 +75,14 @@ const Draw: Component = () => {
       setDrawing([]);
       setZoom(1);
     },
-    onmove: e => {
-      if (e.buttons == 0) return;
+    onmove: (e: PointerEvent) => {
+      if (e.buttons == 0 || e.pointerType === "touch") return;
       const dp = new DOMPoint(e.x, e.y).matrixTransform(svg.getScreenCTM()!.inverse());
       const p = Complex(dp.x, -dp.y);
       // console.log(p);
       setDrawing([...drawing(), p]);
+      console.log(e);
+      if (e.preventDefault) e.preventDefault();
     },
     onup: _ => {
       let francium = drawing();
@@ -106,6 +108,7 @@ const Draw: Component = () => {
       setDrawing([]);
       startTime = currentTime();
     },
+    passive: false,
   };
 
   createPointerListeners(listeners);
@@ -114,9 +117,12 @@ const Draw: Component = () => {
   start();
   //createEffect(() => console.log(time()));
 
+  onMount(() =>
+    svg.addEventListener("touchmove", (e) => {listeners.onmove({x: e.touches[0].pageX, y: e.touches[0].pageY});e.preventDefault()}));
+
   return (
-    <Svg ref={svg} onKeyDown={handleKeyDown}  min={camera().sub(complexZoom())} max={camera().add(complexZoom())} class="w-full h-full" tabindex="0"
-      ontouchmove={(e) => listeners.onmove({x: e.touches[0].pageX, y: e.touches[0].pageY})} ontouchend={listeners.onup}
+    <Svg ref={svg} onKeyDown={handleKeyDown}  min={camera().sub(complexZoom())} max={camera().add(complexZoom())} class="w-screen h-screen block" tabindex="0"
+       ontouchend={listeners.onup}
     >
       <For each={zip(filteredFourier(), positions())}>
         {([{z, freq}, p]) => <>
